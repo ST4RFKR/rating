@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { AppDispatch, RootState } from '../redux/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { Typography, Paper, Box, Grid, Divider } from '@mui/material';
+import { Typography, Paper, Box, Grid, Divider, Button } from '@mui/material';
 import { storesType } from '../features/stores/storesSlice';
 import { fetchEmployee } from '../features/employees/employeesSlice';
 import { fetchRatings } from '../features/rating/ratingSlice';
 
-const EmployeePage = () => {
+const EmployeePage = ({ path }: any) => {
   const stores = useSelector((state: RootState) => state.stores.stores);
   const ratings = useSelector((state: RootState) => state.ratings.ratings);
   const { id } = useParams<{ id: string }>();
@@ -24,6 +24,11 @@ const EmployeePage = () => {
 
   return employee ? (
     <Box sx={{ padding: 3 }}>
+      <Link to={path}>
+        <Button variant="outlined" sx={{ m: '10px' }}>
+          Назад в магазин
+        </Button>
+      </Link>
       <Paper elevation={3} sx={{ padding: 3, marginBottom: 3 }}>
         <Typography variant="h4" gutterBottom>
           {employee.name}

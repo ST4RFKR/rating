@@ -18,6 +18,7 @@ import AuthPage from './components/AuthPage';
 
 function App() {
   const [user, setUser] = useState<any>(null);
+  const [path, setPath] = useState<any>('');
   const navigate = useNavigate();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -40,6 +41,11 @@ function App() {
       navigate('/');
     }
   }, [user, navigate]);
+
+  function getPath(path: string) {
+    setPath(path);
+  }
+
   return (
     <div className="App">
       <Box>
@@ -52,8 +58,8 @@ function App() {
           <Routes>
             <Route path="/" element={user ? <Navigate to="/main" /> : <AuthPage />} />
             <Route path="/main" element={<Main />} />
-            <Route path="/store/:id" element={<StorePage />} />
-            <Route path="/employee/:id" element={<EmployeePage />} />
+            <Route path="/store/:id" element={<StorePage getPath={getPath} />} />
+            <Route path="/employee/:id" element={<EmployeePage path={path} />} />
           </Routes>
         </Box>
       </Box>
