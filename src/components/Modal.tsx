@@ -5,7 +5,6 @@ import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 
 import Typography from '@mui/material/Typography';
-import AddStoreForm from './AddStoreForm';
 
 const style = {
   position: 'absolute',
@@ -19,7 +18,7 @@ const style = {
   p: 4,
 };
 
-export default function TransitionsModal({ open, handleClose }: any) {
+export default function TransitionsModal({ open, handleClose, decription, children }: any) {
   return (
     <div>
       <Modal
@@ -37,9 +36,9 @@ export default function TransitionsModal({ open, handleClose }: any) {
         <Fade in={open}>
           <Box sx={style}>
             <Typography id="transition-modal-title" variant="h6" component="h2">
-              Создание магазина
+              {decription}
             </Typography>
-            <AddStoreForm />
+            {children}
           </Box>
         </Fade>
       </Modal>

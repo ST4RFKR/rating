@@ -134,7 +134,7 @@ const stores = [
 ];
 const employees = [
   {
-    id: 'employee_',
+    id: 'employee_1',
     name: 'Иванов Иван',
     currentStoreId: 'store_1',
     position: 'Менеджер',

@@ -1,27 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { addStore, storesType } from '../features/stores/storesSlice';
-import { RootState } from '../redux/store';
+import { fetchStores, storesType } from '../features/stores/storesSlice';
+import { AppDispatch, RootState } from '../redux/store';
 import { Button, IconButton, Tooltip } from '@mui/material';
 import { Link } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import Modal from '../components/Modal';
 import { useDispatch } from 'react-redux';
+import AddStoreForm from '../components/AddStoreForm';
+
 const Main = () => {
-  const [open, setOpen] = React.useState(true);
+  const dispatch = useDispatch<AppDispatch>();
+  const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const stores = useSelector((state: RootState) => state.stores);
-  const dispatch = useDispatch();
-  const AddNewStore = () => {
-    dispatch(
-      addStore({ id: 'store_3', name: 'Store 3', location: 'USA, LA', employees: ['employee_1'] }),
-    );
-  };
+  const stores = useSelector((state: RootState) => state.stores.stores);
+  useEffect(() => {
+    dispatch(fetchStores());
+  }, [dispatch]);
 
   return (
     <div>
-      <button onClick={AddNewStore}>Add</button>
       {stores.map((el: storesType) => (
         <Link to={`/store/${el.id}`} key={el.id} style={{ textDecoration: 'none' }}>
           <Button sx={{ ml: '10px' }} variant="outlined">
@@ -34,7 +33,9 @@ const Main = () => {
           <AddIcon />
         </IconButton>
       </Tooltip>
-      <Modal open={open} handleClose={handleClose} />
+      <Modal open={open} handleClose={handleClose} decription={'Создать магазин'}>
+        <AddStoreForm handleClose={handleClose} />
+      </Modal>
     </div>
   );
 };

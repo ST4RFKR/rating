@@ -1,5 +1,67 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { addDoc, collection, doc, getDocs, setDoc } from 'firebase/firestore';
+import { db } from '../../firebase/firebaseConfig';
+
+export const fetchRatings = createAsyncThunk(
+  'employee/fetchRatings',
+  async (_, { rejectWithValue }) => {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'ratings'));
+      const ratings = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+
+        return {
+          id: doc.id,
+          employeeId: data.employeeId || '',
+          storeId: data.storeId || '',
+          date: data.date || '',
+          time: data.time || '',
+          score: data.score || 0,
+          comment: data.comment || '',
+          videoUrl: data.videoUrl || '',
+        } as ratingType;
+      });
+      return ratings;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Ошибка при загрузке рейтингов');
+    }
+  },
+);
+export const createRating = createAsyncThunk(
+  'ratings/createRatings',
+  async (newRating: ratingType, { rejectWithValue }) => {
+    try {
+      await setDoc(doc(db, 'ratings', newRating.id), newRating);
+      return newRating;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Ошибка при добавлении нового рейтинга');
+    }
+  },
+);
+
+// import axios from 'axios';
+// export const fetchRatings = createAsyncThunk(
+//   'employee/fetchRatings',
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.get('https://ab3611e09d40cfd3.mokky.dev/ratings');
+//       return response.data;
+//     } catch (error: any) {
+//       return rejectWithValue(error.response?.data || 'Произошла ошибка при загрузке данных');
+//     }
+//   },
+// );
+// export const createRating = createAsyncThunk(
+//   'employee/createRating',
+//   async (newRating: addNewRatingActionType['payload'], { rejectWithValue }) => {
+//     try {
+//       const response = await axios.post('https://ab3611e09d40cfd3.mokky.dev/ratings', newRating);
+//       return response.data;
+//     } catch (error: any) {
+//       return rejectWithValue(error.response?.data || 'Ошибка при добавлении нового рейтинга');
+//     }
+//   },
+// );
 type ratingType = {
   id: string;
   employeeId: string;
@@ -10,128 +72,56 @@ type ratingType = {
   comment: string;
   videoUrl: string;
 };
-const initialState: ratingType[] = [
-  {
-    id: 'rating_1',
-    employeeId: 'employee_1',
-    storeId: 'store_1',
-    date: '2024-10-01',
-    time: '18:00',
-    score: 4,
-    comment: 'Хорошая работа!',
-    videoUrl: 'http://example.com/video1',
-  },
-  {
-    id: 'rating_2',
-    employeeId: 'employee_1',
-    storeId: 'store_1',
-    date: '2024-10-05',
-    time: '18:00',
-    score: 5,
-    comment: 'Отлично!',
-    videoUrl: 'http://example.com/video2',
-  },
-  {
-    id: 'rating_3',
-    employeeId: 'employee_2',
-    storeId: 'store_1',
-    date: '2024-10-02',
-    time: '18:00',
-    score: 3,
-    comment: 'Есть над чем поработать.',
-    videoUrl: 'http://example.com/video3',
-  },
-  {
-    id: 'rating_4',
-    employeeId: 'employee_4',
-    storeId: 'store_2',
-    date: '2024-10-03',
-    time: '18:00',
-    score: 5,
-    comment: 'Превосходно!',
-    videoUrl: 'http://example.com/video4',
-  },
-  {
-    id: 'rating_4',
-    employeeId: 'employee_4',
-    storeId: 'store_2',
-    date: '2024-10-03',
-    time: '18:00',
-    score: 1,
-    comment: '',
-    videoUrl: 'http://example.com/video4',
-  },
-  {
-    id: 'rating_5',
-    employeeId: 'employee_5',
-    storeId: 'store_2',
-    date: '2024-10-04',
-    time: '18:00',
-    score: 4,
-    comment: 'Хороший результат.',
-    videoUrl: 'http://example.com/video5',
-  },
-  {
-    id: 'rating_6',
-    employeeId: 'employee_6',
-    storeId: 'store_2',
-    date: '2024-10-06',
-    time: '18:00',
-    score: 2,
-    comment: 'Необходимо улучшение.',
-    videoUrl: 'http://example.com/video6',
-  },
-  {
-    id: 'rating_7',
-    employeeId: 'employee_7',
-    storeId: 'store_3',
-    date: '2024-10-01',
-    time: '18:00',
-    score: 4,
-    comment: 'Неплохо.',
-    videoUrl: 'http://example.com/video7',
-  },
-  {
-    id: 'rating_8',
-    employeeId: 'employee_8',
-    storeId: 'store_3',
-    date: '2024-10-02',
-    time: '18:00',
-    score: 3,
-    comment: 'Средний уровень.',
-    videoUrl: 'http://example.com/video8',
-  },
-  {
-    id: 'rating_9',
-    employeeId: 'employee_9',
-    storeId: 'store_4',
-    date: '2024-10-03',
-    time: '18:00',
-    score: 5,
-    comment: 'Отличный подход!',
-    videoUrl: 'http://example.com/video9',
-  },
-  {
-    id: 'rating_10',
-    employeeId: 'employee_10',
-    storeId: 'store_4',
-    date: '2024-10-04',
-    time: '18:00',
-    score: 4,
-    comment: 'Хорошая работа.',
-    videoUrl: 'http://example.com/video10',
-  },
-];
+type initialStateType = {
+  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  ratings: ratingType[];
+};
+type addNewRatingActionType = {
+  payload: {
+    id: string;
+    storeId: string;
+    employeeId: string;
+    date: string;
+    time: string;
+    score: number;
+    comment: string;
+    videoUrl: string;
+  };
+};
+const initialState: initialStateType = {
+  status: 'idle',
+  ratings: [],
+};
 
 export const ratingsSlice = createSlice({
   name: 'ratings',
   initialState,
   reducers: {
-    addNewRating: (state, action) => {
-      const { id, employeeId, storeId, date, time, score, comment, videoUrl } = action.payload;
-      const newFeedback = { id, employeeId, storeId, date, time, score, comment, videoUrl };
-      return [...state, newFeedback];
+    addNewRating: (state: initialStateType, action: addNewRatingActionType) => {
+      return {
+        ...state,
+        ratings: [...state.ratings, { ...action.payload }],
+      };
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      //ДОБАВЛЕНИЕ ПОЛУЧЕНИЯ РЕЙТИНГА
+      .addCase(fetchRatings.pending, (state) => {
+        state.status = 'pending';
+      })
+      .addCase(fetchRatings.fulfilled, (state: initialStateType, action) => {
+        state.status = 'succeeded';
+        state.ratings = action.payload;
+      })
+      // ДОБАВЛЕНИЕ НОВОГО РЕЙТИНГА
+      .addCase(createRating.pending, (state) => {
+        state.status = 'pending';
+      })
+      .addCase(createRating.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.ratings.push(action.payload);
+      });
   },
 });
 

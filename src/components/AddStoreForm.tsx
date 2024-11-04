@@ -1,20 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TextField, Button, Box, Autocomplete } from '@mui/material';
-import { addStore, storesType } from '../features/stores/storesSlice';
+import { createStore, storesType } from '../features/stores/storesSlice';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { employeeType } from '../features/employees/employeesSlice';
-import { RootState } from '../redux/store';
-
-const AddStoreForm = () => {
-  const dispatch = useDispatch();
-  const employees = useSelector((state: RootState) => state.employees);
+import { employeeType, fetchEmployee } from '../features/employees/employeesSlice';
+import { AppDispatch, RootState } from '../redux/store';
+type AddStoreForm = {
+  handleClose: (value: boolean) => void;
+};
+const AddStoreForm = ({ handleClose }: AddStoreForm) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const employees = useSelector((state: RootState) => state.employees.employee);
   const [storeData, setStoreData] = useState({
     id: '',
     name: '',
     location: '',
     employees: [],
   });
+  useEffect(() => {
+    dispatch(fetchEmployee());
+  }, [dispatch]);
   const changeStoreData = (params: string) => {
     return (e: any) => {
       setStoreData({
@@ -30,7 +35,8 @@ const AddStoreForm = () => {
     });
   };
   const AddNewStore = () => {
-    dispatch(addStore({ ...storeData }));
+    dispatch(createStore({ ...storeData }));
+    handleClose(false);
   };
   return (
     <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 400 }}>
@@ -54,7 +60,7 @@ const AddStoreForm = () => {
       />
       <Autocomplete
         multiple
-        options={employees} // Заглушка для списка сотрудников
+        options={employees}
         getOptionLabel={(option) => option.name}
         onChange={handleEmployeesChange}
         renderInput={(params) => (
@@ -62,7 +68,7 @@ const AddStoreForm = () => {
         )}
         ListboxProps={{
           style: {
-            maxHeight: 200, // Ограничение высоты выпадающего списка (около 5 элементов)
+            maxHeight: 200,
             overflow: 'auto',
           },
         }}
