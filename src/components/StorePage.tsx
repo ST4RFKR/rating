@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { fetchStores, storesType } from '../features/stores/storesSlice';
 import { employeeType, fetchEmployee } from '../features/employees/employeesSlice';
-import { Typography, Box, Paper, List, Button } from '@mui/material';
+import { Typography, Box, Paper, List, Button, ButtonGroup } from '@mui/material';
 import { RatingItem } from './RatingItem';
 import Modal from './Modal';
 import AddNewRatingForm from './AddNewRatingForm';
@@ -51,9 +51,14 @@ const StorePage = ({ getPath }: any) => {
       <Typography variant="h4" component="h2" gutterBottom>
         Сотрудники магазина {store.name}
       </Typography>
-      <Button onClick={handleOpen} variant="outlined">
-        Оценить сотрудника
-      </Button>
+
+      <ButtonGroup sx={{ m: '10px' }} variant="outlined" aria-label="Basic button group">
+        <Button onClick={handleOpen}>Оценить сотрудника</Button>
+        <Link to={'/main'}>
+          {' '}
+          <Button>К выбору магазина</Button>
+        </Link>
+      </ButtonGroup>
       <Modal
         storeID={id}
         open={open}
