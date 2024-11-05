@@ -12,13 +12,33 @@ import { Box, Button } from '@mui/material';
 import Main from './pages/Main';
 import StorePage from './components/StorePage';
 import EmployeePage from './components/EmployeePage';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { auth } from './firebase/firebaseConfig';
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth, db } from './firebase/firebaseConfig';
 import AuthPage from './components/AuthPage';
+import { collection, DocumentData, getDocs } from 'firebase/firestore';
 
 function App() {
+  const [users, setUsers] = useState<DocumentData[]>([]);
+  const [roleCurrentUser, setRoleCurrentUser] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
+  console.log(roleCurrentUser);
+
   const [path, setPath] = useState<any>('');
+
+  async function getUsers() {
+    const querySnapshot = await getDocs(collection(db, 'users'));
+    const usersArray = querySnapshot.docs.map((doc) => doc.data());
+    setUsers(usersArray);
+  }
+
+  useEffect(() => {
+    const currentUid = getAuth().currentUser?.uid;
+    if (currentUid && users.length > 0) {
+      const currentUserData = users.find((el) => el.uid === currentUid);
+      setRoleCurrentUser(currentUserData ? currentUserData.role : null);
+    }
+  }, [users]);
+
   const navigate = useNavigate();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -31,6 +51,7 @@ function App() {
       await signOut(auth);
       setUser(null);
       alert('User logged out successfully');
+      setRoleCurrentUser(null);
     } catch (error: any) {
       console.error(error);
       alert(error.message);
@@ -57,7 +78,10 @@ function App() {
         <Box>
           <Routes>
             <Route path="/" element={user ? <Navigate to="/main" /> : <AuthPage />} />
-            <Route path="/main" element={<Main />} />
+            <Route
+              path="/main"
+              element={<Main roleCurrentUser={roleCurrentUser} getUsers={getUsers} />}
+            />
             <Route path="/store/:id" element={<StorePage getPath={getPath} />} />
             <Route path="/employee/:id" element={<EmployeePage path={path} />} />
           </Routes>

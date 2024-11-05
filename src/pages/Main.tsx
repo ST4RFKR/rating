@@ -9,7 +9,7 @@ import Modal from '../components/Modal';
 import { useDispatch } from 'react-redux';
 import AddStoreForm from '../components/AddStoreForm';
 
-const Main = () => {
+const Main = ({ roleCurrentUser, getUsers }: any) => {
   const dispatch = useDispatch<AppDispatch>();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -18,6 +18,9 @@ const Main = () => {
   useEffect(() => {
     dispatch(fetchStores());
   }, [dispatch]);
+  useEffect(() => {
+    getUsers();
+  }, []);
 
   return (
     <div>
@@ -28,11 +31,14 @@ const Main = () => {
           </Button>
         </Link>
       ))}
-      <Tooltip title="Создать новый магазин">
-        <IconButton color="primary" onClick={handleOpen}>
-          <AddIcon />
-        </IconButton>
-      </Tooltip>
+      {roleCurrentUser === 'admin' && (
+        <Tooltip title="Создать новый магазин">
+          <IconButton color="primary" onClick={handleOpen}>
+            <AddIcon />
+          </IconButton>
+        </Tooltip>
+      )}
+
       <Modal open={open} handleClose={handleClose} decription={'Создать магазин'}>
         <AddStoreForm handleClose={handleClose} />
       </Modal>

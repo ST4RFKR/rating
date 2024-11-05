@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { addDoc, collection, doc, getDocs, setDoc } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, setDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebaseConfig';
 
 export const fetchRatings = createAsyncThunk(
@@ -35,6 +35,18 @@ export const createRating = createAsyncThunk(
       return newRating;
     } catch (error: any) {
       return rejectWithValue(error.message || 'Ошибка при добавлении нового рейтинга');
+    }
+  },
+);
+export const deleteRating = createAsyncThunk(
+  'ratings/deleteRating',
+  async (ratingId: string, { rejectWithValue }) => {
+    try {
+      const itemRef = doc(db, 'ratings', ratingId);
+      await deleteDoc(itemRef);
+      return ratingId;
+    } catch (error: any) {
+      return rejectWithValue(error.message);
     }
   },
 );
@@ -121,6 +133,15 @@ export const ratingsSlice = createSlice({
       .addCase(createRating.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.ratings.push(action.payload);
+      });
+    //УДАЛЯЕМ РЕЙТИНГ ПО ID
+    builder
+      .addCase(deleteRating.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.ratings = state.ratings.filter((item) => item.id !== action.payload);
+      })
+      .addCase(deleteRating.rejected, (state) => {
+        state.status = 'failed';
       });
   },
 });

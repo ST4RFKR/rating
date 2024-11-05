@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase/firebaseConfig';
+import { auth, db } from '../firebase/firebaseConfig';
+
 import { Button, TextField, Box, Typography, Paper } from '@mui/material';
+import { addDoc, collection, Firestore } from 'firebase/firestore';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -10,7 +12,14 @@ const Register = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      await addDoc(collection(db, 'users'), {
+        uid: user.uid,
+        email: user.email,
+        role: 'user',
+        createdAt: new Date().toISOString(),
+      });
       alert('User registered successfully');
     } catch (error: any) {
       console.error(error);

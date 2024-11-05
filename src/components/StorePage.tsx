@@ -4,11 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { fetchStores, storesType } from '../features/stores/storesSlice';
 import { employeeType, fetchEmployee } from '../features/employees/employeesSlice';
-import { Typography, Box, Paper, List, Button, ButtonGroup } from '@mui/material';
+import { Typography, Box, Paper, List, Button, ButtonGroup, IconButton } from '@mui/material';
 import { RatingItem } from './RatingItem';
 import Modal from './Modal';
 import AddNewRatingForm from './AddNewRatingForm';
-import { fetchRatings } from '../features/rating/ratingSlice';
+import { deleteRating, fetchRatings } from '../features/rating/ratingSlice';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const StorePage = ({ getPath }: any) => {
   const { id } = useParams<{ id: string }>();
@@ -70,23 +71,26 @@ const StorePage = ({ getPath }: any) => {
         const filteredRating = ratings.filter((r) => r.employeeId === el.id && r.storeId === id);
 
         return (
-          <Link to={`/employee/${el.id}`} key={el.id} style={{ textDecoration: 'none' }}>
-            <Paper key={el.id} elevation={3} sx={{ marginBottom: 2, padding: 2 }}>
+          <Paper
+            key={el.id}
+            elevation={3}
+            sx={{ marginBottom: 2, padding: 2, position: 'relative' }}>
+            <Link to={`/employee/${el.id}`} key={el.id} style={{ textDecoration: 'none' }}>
               <Typography variant="h6">{el.name}</Typography>
+            </Link>
 
-              {filteredRating.length ? (
-                <List>
-                  {filteredRating.map((rating) => (
-                    <RatingItem key={rating.id} {...rating} />
-                  ))}
-                </List>
-              ) : (
-                <Typography variant="body2" color="textSecondary">
-                  Нет оценок
-                </Typography>
-              )}
-            </Paper>
-          </Link>
+            {filteredRating.length ? (
+              <List>
+                {filteredRating.map((rating) => (
+                  <RatingItem key={rating.id} {...rating} ratingId={rating.id} />
+                ))}
+              </List>
+            ) : (
+              <Typography variant="body2" color="textSecondary">
+                Нет оценок
+              </Typography>
+            )}
+          </Paper>
         );
       })}
     </Box>

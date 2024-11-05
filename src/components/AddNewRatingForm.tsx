@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { TextField, Button, Box, Autocomplete } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
-import { addNewRating, createRating } from '../features/rating/ratingSlice';
+import { createRating } from '../features/rating/ratingSlice';
 import { v1 } from 'uuid';
 import { fetchEmployee } from '../features/employees/employeesSlice';
-import { createStore, updateStoreEmployees } from '../features/stores/storesSlice';
+import { updateStoreEmployees } from '../features/stores/storesSlice';
 
 const AddNewRatingForm = ({ store, handleClose }: any) => {
   const employees = useSelector((state: RootState) => state.employees.employee);
