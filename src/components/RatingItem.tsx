@@ -15,6 +15,7 @@ type RatingItemPropsType = {
   storeId: string;
   ratingId: string;
   comment?: string;
+  videoUrl: string;
 };
 export const RatingItem = ({
   date,
@@ -23,6 +24,7 @@ export const RatingItem = ({
   storeId,
   comment,
   ratingId,
+  videoUrl,
 }: RatingItemPropsType) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -64,6 +66,7 @@ export const RatingItem = ({
             <strong>Время:</strong> {time} <br />
             <strong>Оценка:</strong> {score} <br />
             <strong>Магазин:</strong> {storeId} <br />
+            <strong>Сcылка на видео:</strong> <a href={`${videoUrl}`}>{videoUrl} </a> <br />
             {comment && (
               <>
                 <strong>Комментарий:</strong> {comment} <br />

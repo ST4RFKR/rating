@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { addDoc, collection, deleteDoc, doc, getDocs, setDoc } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebaseConfig';
 
 export const fetchRatings = createAsyncThunk(
@@ -45,6 +45,19 @@ export const deleteRating = createAsyncThunk(
       const itemRef = doc(db, 'ratings', ratingId);
       await deleteDoc(itemRef);
       return ratingId;
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const chengeRating = createAsyncThunk(
+  'ratings/updateRating',
+  async ({ ratingId, newData }: any, { rejectWithValue }) => {
+    try {
+      const itemRef = doc(db, 'ratings', ratingId);
+      await updateDoc(itemRef, newData);
+      return { id: ratingId, ...newData };
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -142,6 +155,13 @@ export const ratingsSlice = createSlice({
       })
       .addCase(deleteRating.rejected, (state) => {
         state.status = 'failed';
+      })
+      .addCase(chengeRating.fulfilled, (state, action) => {
+        const { id, ...data } = action.payload;
+        state.status = 'succeeded';
+        state.ratings = state.ratings.map((rating) =>
+          rating.id === id ? { ...rating, ...data } : rating,
+        );
       });
   },
 });
