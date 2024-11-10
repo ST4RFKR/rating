@@ -1,21 +1,19 @@
 import React, { useEffect } from 'react';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
-import { fetchStores, storesType } from '../features/stores/storesSlice';
-import { employeeType, fetchEmployee } from '../features/employees/employeesSlice';
-import { Typography, Box, Paper, List, Button, ButtonGroup, IconButton } from '@mui/material';
-import { RatingItem } from './RatingItem';
+import { Typography, Box, Paper, ButtonGroup, Button } from '@mui/material';
+import RatingDetail from './RatingDetail';
 import Modal from './Modal';
 import AddNewRatingForm from './AddNewRatingForm';
-import { deleteRating, fetchRatings } from '../features/rating/ratingSlice';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { fetchStores, storesType } from '../features/stores/storesSlice';
+import { fetchEmployee } from '../features/employees/employeesSlice';
+import { fetchRatings } from '../features/rating/ratingSlice';
 
 const StorePage = ({ getPath }: any) => {
   const { id } = useParams<{ id: string }>();
   const [open, setOpen] = React.useState(false);
   const { pathname } = useLocation();
-
   useEffect(() => {
     getPath(pathname);
   }, [pathname]);
@@ -32,13 +30,12 @@ const StorePage = ({ getPath }: any) => {
     dispatch(fetchStores());
   }, [dispatch]);
 
-  const store = stores.find((s: storesType) => s.id == id);
-  const filteredEmployees = employees.filter((el) => {
-    return store?.employees.includes(el.id);
-  });
+  const store = stores.find((s: storesType) => s.id === id);
+  const filteredEmployees = employees.filter((el) => store?.employees.includes(el.id));
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
   if (!store) {
     return (
       <Typography variant="h6" color="error" align="center">
@@ -53,13 +50,13 @@ const StorePage = ({ getPath }: any) => {
         Сотрудники магазина {store.name}
       </Typography>
 
-      <ButtonGroup sx={{ m: '10px' }} variant="outlined" aria-label="Basic button group">
+      <ButtonGroup sx={{ m: '10px' }} variant="outlined">
         <Button onClick={handleOpen}>Оценить сотрудника</Button>
         <Link to={'/main'}>
-          {' '}
           <Button>К выбору магазина</Button>
         </Link>
       </ButtonGroup>
+
       <Modal
         storeID={id}
         open={open}
@@ -67,24 +64,30 @@ const StorePage = ({ getPath }: any) => {
         decription={'Создать оценку для сотрудника'}>
         <AddNewRatingForm store={store} handleClose={handleClose} />
       </Modal>
-      {filteredEmployees.map((el: employeeType) => {
+
+      {filteredEmployees.map((el) => {
         const filteredRating = ratings.filter((r) => r.employeeId === el.id && r.storeId === id);
 
         return (
-          <Paper
-            key={el.id}
-            elevation={3}
-            sx={{ marginBottom: 2, padding: 2, position: 'relative' }}>
-            <Link to={`/employee/${el.id}`} key={el.id} style={{ textDecoration: 'none' }}>
+          <Paper key={el.id} elevation={3} sx={{ marginBottom: 2, padding: 2 }}>
+            <Link to={`/employee/${el.id}`} style={{ textDecoration: 'none' }}>
               <Typography variant="h6">{el.name}</Typography>
             </Link>
 
             {filteredRating.length ? (
-              <List>
-                {filteredRating.map((rating) => (
-                  <RatingItem key={rating.id} {...rating} ratingId={rating.id} />
-                ))}
-              </List>
+              filteredRating.map((rating) => (
+                <RatingDetail
+                  key={rating.id}
+                  date={rating.date}
+                  time={rating.time}
+                  score={rating.score}
+                  storeId={rating.storeId}
+                  videoUrl={rating.videoUrl}
+                  comment={rating.comment}
+                  stores={stores}
+                  ratingId={rating.id}
+                />
+              ))
             ) : (
               <Typography variant="body2" color="textSecondary">
                 Нет оценок

@@ -21,7 +21,7 @@ export const fetchEmployee = createAsyncThunk(
           phone: data.phone || '',
           performanceScores: data.performanceScores || [],
           averageScore: data.averageScore || null,
-          address: data.adress,
+          address: data.address,
         } as employeeType;
       });
 
