@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Link,
-  Navigate,
-  useNavigate,
-} from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
 import './App.css';
 import { Box, Button } from '@mui/material';
 import Main from './pages/Main';
