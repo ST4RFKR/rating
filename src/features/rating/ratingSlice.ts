@@ -13,7 +13,10 @@ export const fetchRatings = createAsyncThunk(
         return {
           id: doc.id,
           employeeId: data.employeeId || '',
-          storeId: data.storeId || '',
+          store: {
+            id: data.store?.id || '',
+            name: data.store?.name || '',
+          },
           date: data.date || '',
           time: data.time || '',
           score: data.score || 0,
@@ -21,6 +24,7 @@ export const fetchRatings = createAsyncThunk(
           videoUrl: data.videoUrl || '',
         } as ratingType;
       });
+
       return ratings;
     } catch (error: any) {
       return rejectWithValue(error.message || 'Ошибка при загрузке рейтингов');
@@ -90,7 +94,10 @@ export const chengeRating = createAsyncThunk(
 type ratingType = {
   id: string;
   employeeId: string;
-  storeId: string;
+  store: {
+    id: string;
+    name: string;
+  };
   date: string;
   time: string;
   score: number;
@@ -104,7 +111,10 @@ type initialStateType = {
 type addNewRatingActionType = {
   payload: {
     id: string;
-    storeId: string;
+    store: {
+      id: string;
+      name: string;
+    };
     employeeId: string;
     date: string;
     time: string;

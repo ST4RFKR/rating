@@ -21,6 +21,7 @@ const StorePage = ({ getPath }: any) => {
   const stores = useSelector((state: RootState) => state.stores.stores);
   const employees = useSelector((state: RootState) => state.employees.employee);
   const ratings = useSelector((state: RootState) => state.ratings.ratings);
+  console.log(ratings);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -66,7 +67,8 @@ const StorePage = ({ getPath }: any) => {
       </Modal>
 
       {filteredEmployees.map((el) => {
-        const filteredRating = ratings.filter((r) => r.employeeId === el.id && r.storeId === id);
+        const filteredRating = ratings.filter((r) => r.employeeId === el.id && r.store.id === id);
+        console.log(filteredRating);
 
         return (
           <Paper key={el.id} elevation={3} sx={{ marginBottom: 2, padding: 2 }}>
@@ -81,10 +83,9 @@ const StorePage = ({ getPath }: any) => {
                   date={rating.date}
                   time={rating.time}
                   score={rating.score}
-                  storeId={rating.storeId}
+                  store={rating.store}
                   videoUrl={rating.videoUrl}
                   comment={rating.comment}
-                  stores={stores}
                   ratingId={rating.id}
                 />
               ))

@@ -8,11 +8,17 @@ import { fetchEmployee } from '../features/employees/employeesSlice';
 import { fetchRatings } from '../features/rating/ratingSlice';
 import EmployeInfo from './EmployeeInfo';
 import SortBy from './UI/select/SortBy';
+import SearchInput from './UI/input/SearchInput';
+import { query } from 'firebase/firestore';
+import RatingFilter from './RatingFilter';
 
-type SortOption = 'date-asc' | 'date-desc' | 'store-asc' | 'store-desc';
+
 const EmployeePage = ({ path }: any) => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch<AppDispatch>();
+
+  const currentMonth = new Date().getMonth() + 1;
+  const currentYear = new Date().getFullYear();
 
   useEffect(() => {
     dispatch(fetchEmployee());
@@ -21,26 +27,46 @@ const EmployeePage = ({ path }: any) => {
 
   const employees = useSelector((state: RootState) => state.employees.employee);
   const ratings = useSelector((state: RootState) => state.ratings.ratings);
-  const stores = useSelector((state: RootState) => state.stores.stores);
 
   const employee = employees.find((el) => el.id === id);
   const employeeRatings = ratings.filter((rating) => rating.employeeId === id);
-  const currentStore = stores.find((store) => store.id === employee?.currentStoreId);
 
-  const [selectedSort, setSelectedSort] = React.useState('');
+  const [filter, setFilter] = React.useState({ sort: '', query: '', currentMonth: false });
+
   const sortedRatings = React.useMemo(() => {
+    // Сортировка
     let sorted = [...employeeRatings];
-    if (selectedSort === 'date-asc') {
+    if (filter.sort === 'date-asc') {
       sorted = sorted.sort((a, b) => a.date.localeCompare(b.date));
-    } else if (selectedSort === 'date-desc') {
+    } else if (filter.sort === 'date-desc') {
       sorted = sorted.sort((a, b) => b.date.localeCompare(a.date));
-    } else if (selectedSort === 'store-asc') {
-      sorted = sorted.sort((a, b) => a.storeId.localeCompare(b.storeId));
-    } else if (selectedSort === 'store-desc') {
-      sorted = sorted.sort((a, b) => b.storeId.localeCompare(a.storeId));
+    } else if (filter.sort === 'store-asc') {
+      sorted = sorted.sort((a, b) => a.store.id.localeCompare(b.store.id));
+    } else if (filter.sort === 'store-desc') {
+      sorted = sorted.sort((a, b) => b.store.id.localeCompare(a.store.id));
     }
     return sorted;
-  }, [employeeRatings, selectedSort]);
+  }, [employeeRatings, filter.sort]);
+  const sortedAndSearchRatings = React.useMemo(() => {
+    let filteredRatings = sortedRatings;
+
+    // Фильтрация по текущему месяцу
+    if (filter.currentMonth) {
+      filteredRatings = filteredRatings.filter((rating) => {
+        const [year, month] = rating.date.split('-').map(Number);
+        return month === currentMonth && year === currentYear;
+      });
+    }
+
+    // Фильтрация по запросу
+    if (filter.query) {
+      filteredRatings = filteredRatings.filter((rating) =>
+        rating.store.name.toLowerCase().includes(filter.query.toLowerCase()),
+      );
+    }
+
+    return filteredRatings;
+  }, [filter.query, filter.currentMonth, sortedRatings]);
 
   if (!employee) {
     return <Typography variant="h6">Сотрудник не найден</Typography>;
@@ -55,17 +81,7 @@ const EmployeePage = ({ path }: any) => {
             Назад в магазин
           </Button>
         </Link>
-        <SortBy
-          value={selectedSort}
-          onChange={(value: SortOption) => setSelectedSort(value)}
-          defaultValue="Сортировка"
-          options={[
-            { value: 'store-asc', name: 'По магазинам (по возрастанию)' },
-            { value: 'store-desc', name: 'По магазинам (по убыванию)' },
-            { value: 'date-asc', name: 'По дате (по возрастанию)' },
-            { value: 'date-desc', name: 'По дате  (по убыванию)' },
-          ]}
-        />
+        <RatingFilter filter={filter} setFilter={setFilter} />
       </Box>
 
       <Box sx={{ marginBottom: 2 }}>
@@ -73,17 +89,16 @@ const EmployeePage = ({ path }: any) => {
       </Box>
 
       {/* Список оценок сотрудника */}
-      {sortedRatings.length ? (
-        sortedRatings.map((rating) => (
+      {sortedAndSearchRatings.length ? (
+        sortedAndSearchRatings.map((rating) => (
           <RatingDetail
             key={rating.id}
             date={rating.date}
             time={rating.time}
             score={rating.score}
-            storeId={rating.storeId}
+            store={rating.store}
             videoUrl={rating.videoUrl}
             comment={rating.comment}
-            stores={stores} // передаем магазины, если нужно
             ratingId={rating.id}
           />
         ))

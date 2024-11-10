@@ -21,7 +21,6 @@ function App() {
   const [users, setUsers] = useState<DocumentData[]>([]);
   const [roleCurrentUser, setRoleCurrentUser] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
-  console.log(roleCurrentUser);
 
   const [path, setPath] = useState<any>('');
 

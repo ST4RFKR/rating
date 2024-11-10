@@ -47,7 +47,7 @@ const AddNewRatingForm = ({ store, handleClose }: any) => {
       };
       await dispatch(updateStoreEmployees(updatedStore));
     }
-    dispatch(createRating({ ...ratingData, storeId: store.id }));
+    dispatch(createRating({ ...ratingData, store: {id: store.id, name: store.name} }));
     setRatingData({
       id: v1(),
       date: '',

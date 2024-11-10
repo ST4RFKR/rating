@@ -1,19 +1,25 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-
+type SortOption = 'date-asc' | 'date-desc' | 'store-asc' | 'store-desc';
 type SortByProps = {
   options: {
-    value: string;
+    value: SortOption;
     name: string;
   }[];
   defaultValue: string;
-  value: string;
+  value: {
+    query: string;
+    sort: string;
+  };
   onChange: (e: any) => void;
 };
 const SortBy = ({ options, defaultValue, value, onChange }: SortByProps) => {
   return (
-    <FormControl variant="outlined" sx={{ minWidth: 120, marginTop: 2 }}>
+    <FormControl fullWidth variant="outlined" sx={{ minWidth: 120, marginTop: 2 }}>
       <InputLabel>{defaultValue}</InputLabel>
-      <Select value={value} onChange={(e) => onChange(e.target.value)} label={defaultValue}>
+      <Select
+        value={value.sort}
+        onChange={(e) => onChange({ ...value, sort: e.target.value })}
+        label={defaultValue}>
         <MenuItem disabled value="">
           {defaultValue}
         </MenuItem>

@@ -12,10 +12,12 @@ type RatingDetailProps = {
   date: string;
   time: string;
   score: number;
-  storeId: string;
+  store: {
+    id: string;
+    name: string;
+  };
   videoUrl: string;
   comment?: string;
-  stores: storesType[];
   ratingId: string;
 };
 
@@ -23,10 +25,9 @@ const RatingDetail = ({
   date,
   time,
   score,
-  storeId,
+  store,
   videoUrl,
   comment,
-  stores,
   ratingId,
 }: RatingDetailProps) => {
   const [open, setOpen] = React.useState(false);
@@ -39,8 +40,6 @@ const RatingDetail = ({
     e.stopPropagation();
     dispatch(deleteRating(ratingId));
   };
-
-  const currentStore = stores.find((store) => store.id === storeId);
 
   return (
     <Box key={`${date}-${time}`} sx={{ marginBottom: 2, position: 'relative' }}>
@@ -60,7 +59,7 @@ const RatingDetail = ({
           <Typography>Оценка: {score}</Typography>
         </Grid>
         <Grid item xs={12} sm={4}>
-          <Typography>Магазин: {currentStore?.name || 'Не указано'}</Typography>
+          <Typography>Магазин: {store.name}</Typography>
         </Grid>
         <Grid item xs={12} sm={4}>
           <Typography>

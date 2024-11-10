@@ -82,7 +82,10 @@ const ratings = [
   {
     id: 'rating_9',
     employeeId: 'employee_9',
-    storeId: 'store_4',
+    store: {
+      name: 'Магазин 4',
+      id: 'store_4',
+    },
     date: '2024-10-03',
     time: '18:00',
     score: 5,
