@@ -9,8 +9,8 @@ type AddStoreForm = {
   handleClose: (value: boolean) => void;
 };
 const AddStoreForm = ({ handleClose }: AddStoreForm) => {
-  const dispatch = useDispatch<AppDispatch>();
   const employees = useSelector((state: RootState) => state.employees.employee);
+  const dispatch = useDispatch<AppDispatch>();
   const [storeData, setStoreData] = useState({
     id: '',
     name: '',

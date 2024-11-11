@@ -10,6 +10,8 @@ import EmployeInfo from '../EmployeeInfo';
 
 import RatingFilter from '../RatingFilter';
 import { useRating } from '../../hook/useRating';
+import RatingDetailSkeleton from '../RatingDetailSkeleton';
+import EmployeInfoSkeleton from '../EmployeInfoSkeleton';
 
 const EmployeePage = ({ path }: any) => {
   const { id } = useParams<{ id: string }>();
@@ -20,8 +22,10 @@ const EmployeePage = ({ path }: any) => {
     dispatch(fetchRatings());
   }, [dispatch]);
 
-  const employees = useSelector((state: RootState) => state.employees.employee);
-  const ratings = useSelector((state: RootState) => state.ratings.ratings);
+  const { status: statusEmployeeDAta, employee: employees } = useSelector(
+    (state: RootState) => state.employees,
+  );
+  const { status: statusRatingData, ratings } = useSelector((state: RootState) => state.ratings);
 
   const employee = employees.find((el) => el.id === id);
   const employeeRatings = ratings.filter((rating) => rating.employeeId === id);
@@ -50,9 +54,15 @@ const EmployeePage = ({ path }: any) => {
       </Box>
 
       <Box sx={{ marginBottom: 2 }}>
-        <EmployeInfo employee={employee} />
+        {statusEmployeeDAta === 'pending' ? (
+          <EmployeInfoSkeleton />
+        ) : (
+          <EmployeInfo employee={employee} />
+        )}
+        <EmployeInfoSkeleton />
       </Box>
-
+      {statusRatingData === 'pending' &&
+        [...Array(4)].map((_, idx) => <RatingDetailSkeleton key={idx} />)}
       {/* Список оценок сотрудника */}
       {sortedAndSearchRatings.length ? (
         sortedAndSearchRatings.map((rating) => (

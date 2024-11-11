@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
@@ -9,6 +9,8 @@ import AddNewRatingForm from '../form/AddNewRatingForm';
 import { fetchStores, storesType } from '../../features/stores/storesSlice';
 import { fetchEmployee } from '../../features/employees/employeesSlice';
 import { fetchRatings } from '../../features/rating/ratingSlice';
+import RatingDetailSkeleton from '../RatingDetailSkeleton';
+import TitleSkeleton from '../TitleSkeleton';
 
 const StorePage = ({ getPath }: any) => {
   const { id } = useParams<{ id: string }>();
@@ -19,11 +21,17 @@ const StorePage = ({ getPath }: any) => {
   }, [pathname]);
 
   const stores = useSelector((state: RootState) => state.stores.stores);
-  const employees = useSelector((state: RootState) => state.employees.employee);
-  const ratings = useSelector((state: RootState) => state.ratings.ratings);
-  console.log(ratings);
+  const { status: statusEmployeesData, employee: employees } = useSelector(
+    (state: RootState) => state.employees,
+  );
+  const { status: statusRatingData, ratings } = useSelector((state: RootState) => state.ratings);
 
   const dispatch = useDispatch<AppDispatch>();
+
+  const [filter, setFilter] = useState({
+    sort: '',
+    query: '',
+  });
 
   useEffect(() => {
     dispatch(fetchEmployee());
@@ -68,13 +76,15 @@ const StorePage = ({ getPath }: any) => {
 
       {filteredEmployees.map((el) => {
         const filteredRating = ratings.filter((r) => r.employeeId === el.id && r.store.id === id);
-        console.log(filteredRating);
 
         return (
           <Paper key={el.id} elevation={3} sx={{ marginBottom: 2, padding: 2 }}>
             <Link to={`/employee/${el.id}`} style={{ textDecoration: 'none' }}>
+              {statusEmployeesData === 'pending' && <TitleSkeleton />}
               <Typography variant="h6">{el.name}</Typography>
             </Link>
+            {statusRatingData === 'pending' &&
+              [...Array(4)].map((_, idx) => <RatingDetailSkeleton key={idx} />)}
 
             {filteredRating.length ? (
               filteredRating.map((rating) => (

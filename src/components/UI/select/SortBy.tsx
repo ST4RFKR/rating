@@ -7,8 +7,8 @@ type SortByProps = {
   }[];
   defaultValue: string;
   value: {
-    query: string;
     sort: string;
+    query: string;
   };
   onChange: (e: any) => void;
 };
