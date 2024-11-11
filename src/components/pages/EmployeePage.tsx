@@ -59,7 +59,6 @@ const EmployeePage = ({ path }: any) => {
         ) : (
           <EmployeInfo employee={employee} />
         )}
-        <EmployeInfoSkeleton />
       </Box>
       {statusRatingData === 'pending' &&
         [...Array(4)].map((_, idx) => <RatingDetailSkeleton key={idx} />)}
