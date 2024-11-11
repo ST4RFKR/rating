@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { TextField, Button, Box, Autocomplete } from '@mui/material';
-import { createStore, storesType } from '../features/stores/storesSlice';
+import { createStore, storesType } from '../../features/stores/storesSlice';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { employeeType, fetchEmployee } from '../features/employees/employeesSlice';
-import { AppDispatch, RootState } from '../redux/store';
+import { employeeType, fetchEmployee } from '../../features/employees/employeesSlice';
+import { AppDispatch, RootState } from '../../redux/store';
 type AddStoreForm = {
   handleClose: (value: boolean) => void;
 };

@@ -4,7 +4,7 @@ import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 import { deleteRating } from '../features/rating/ratingSlice';
 import Modal from './Modal';
-import EditRatingForm from './EditRatingForm';
+import EditRatingForm from './form/EditRatingForm';
 import { storesType } from '../features/stores/storesSlice';
 import { AppDispatch } from '../redux/store';
 

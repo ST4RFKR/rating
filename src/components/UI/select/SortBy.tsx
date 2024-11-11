@@ -1,5 +1,5 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-type SortOption = 'date-asc' | 'date-desc' | 'store-asc' | 'store-desc';
+export type SortOption = 'date-asc' | 'date-desc' | 'store-asc' | 'store-desc';
 type SortByProps = {
   options: {
     value: SortOption;

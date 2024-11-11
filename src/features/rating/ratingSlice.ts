@@ -91,7 +91,7 @@ export const chengeRating = createAsyncThunk(
 //     }
 //   },
 // );
-type ratingType = {
+export type ratingType = {
   id: string;
   employeeId: string;
   store: {

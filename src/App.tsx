@@ -3,12 +3,13 @@ import { HashRouter as Router, Routes, Route, Link, Navigate, useNavigate } from
 import './App.css';
 import { Box, Button } from '@mui/material';
 import Main from './pages/Main';
-import StorePage from './components/StorePage';
-import EmployeePage from './components/EmployeePage';
+import StorePage from './components/pages/StorePage';
+import EmployeePage from './components/pages/EmployeePage';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth, db } from './firebase/firebaseConfig';
-import AuthPage from './components/AuthPage';
+
 import { collection, DocumentData, getDocs } from 'firebase/firestore';
+import AuthPage from "./components/pages/auth/AuthPage";
 
 function App() {
   const [users, setUsers] = useState<DocumentData[]>([]);

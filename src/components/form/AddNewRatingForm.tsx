@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { TextField, Button, Box, Autocomplete } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../redux/store';
-import { createRating } from '../features/rating/ratingSlice';
+import { AppDispatch, RootState } from '../../redux/store';
+import { createRating } from '../../features/rating/ratingSlice';
 import { v1 } from 'uuid';
-import { fetchEmployee } from '../features/employees/employeesSlice';
-import { updateStoreEmployees } from '../features/stores/storesSlice';
+import { fetchEmployee } from '../../features/employees/employeesSlice';
+import { updateStoreEmployees } from '../../features/stores/storesSlice';
 
 const AddNewRatingForm = ({ store, handleClose }: any) => {
   const employees = useSelector((state: RootState) => state.employees.employee);

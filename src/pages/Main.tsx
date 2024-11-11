@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import Modal from '../components/Modal';
 import { useDispatch } from 'react-redux';
-import AddStoreForm from '../components/AddStoreForm';
+import AddStoreForm from '../components/form/AddStoreForm';
 
 const Main = ({ roleCurrentUser, getUsers }: any) => {
   const dispatch = useDispatch<AppDispatch>();

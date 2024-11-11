@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../redux/store';
+import { AppDispatch, RootState } from '../../redux/store';
 import { Typography, Box, Paper, ButtonGroup, Button } from '@mui/material';
-import RatingDetail from './RatingDetail';
-import Modal from './Modal';
-import AddNewRatingForm from './AddNewRatingForm';
-import { fetchStores, storesType } from '../features/stores/storesSlice';
-import { fetchEmployee } from '../features/employees/employeesSlice';
-import { fetchRatings } from '../features/rating/ratingSlice';
+import RatingDetail from '../RatingDetail';
+import Modal from '../Modal';
+import AddNewRatingForm from '../form/AddNewRatingForm';
+import { fetchStores, storesType } from '../../features/stores/storesSlice';
+import { fetchEmployee } from '../../features/employees/employeesSlice';
+import { fetchRatings } from '../../features/rating/ratingSlice';
 
 const StorePage = ({ getPath }: any) => {
   const { id } = useParams<{ id: string }>();

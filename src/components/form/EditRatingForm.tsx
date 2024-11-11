@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../redux/store';
+import { AppDispatch, RootState } from '../../redux/store';
 import { useDispatch } from 'react-redux';
-import { chengeRating } from '../features/rating/ratingSlice';
+import { chengeRating } from '../../features/rating/ratingSlice';
 
 const EditRatingForm = ({ handleClose, ratingId }: any) => {
   const dispath = useDispatch<AppDispatch>();

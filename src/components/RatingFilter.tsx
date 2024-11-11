@@ -21,10 +21,10 @@ const RatingFilter = ({ filter, setFilter }: any) => {
         onChange={setFilter}
         defaultValue="Сортировка"
         options={[
-          { value: 'store-asc', name: 'По магазинам (по возрастанию)' },
-          { value: 'store-desc', name: 'По магазинам (по убыванию)' },
-          { value: 'date-asc', name: 'По дате (по возрастанию)' },
-          { value: 'date-desc', name: 'По дате  (по убыванию)' },
+          { value: 'store-asc' as const, name: 'По магазинам (по возрастанию)' },
+          { value: 'store-desc' as const, name: 'По магазинам (по убыванию)' },
+          { value: 'date-asc' as const, name: 'По дате (по возрастанию)' },
+          { value: 'date-desc' as const, name: 'По дате  (по убыванию)' },
         ]}
       />
     </>

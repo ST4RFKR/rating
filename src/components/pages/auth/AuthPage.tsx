@@ -1,7 +1,9 @@
 import { Box, Button, Paper } from '@mui/material';
 import { useState } from 'react';
-import Login from './Login';
-import Register from './Register';
+
+import Register from "./Register";
+import Login from "./Login";
+
 
 function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
