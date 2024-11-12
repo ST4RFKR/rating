@@ -1,5 +1,11 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-export type SortOption = 'date-asc' | 'date-desc' | 'store-asc' | 'store-desc';
+export type SortOption =
+  | 'date-asc'
+  | 'date-desc'
+  | 'store-asc'
+  | 'store-desc'
+  | 'time-asc'
+  | 'time-desc';
 type SortByProps = {
   options: {
     value: SortOption;
@@ -14,7 +20,7 @@ type SortByProps = {
 };
 const SortBy = ({ options, defaultValue, value, onChange }: SortByProps) => {
   return (
-    <FormControl fullWidth variant="outlined" sx={{ minWidth: 120, marginTop: 2 }}>
+    <FormControl variant="outlined" sx={{ maxWidth: 150, width: '100%', marginTop: 2 }}>
       <InputLabel>{defaultValue}</InputLabel>
       <Select
         value={value.sort}
@@ -24,7 +30,7 @@ const SortBy = ({ options, defaultValue, value, onChange }: SortByProps) => {
           {defaultValue}
         </MenuItem>
         {options.map((option) => (
-          <MenuItem key={option.value} value={option.value}>
+          <MenuItem key={option.name} value={option.value}>
             {option.name}
           </MenuItem>
         ))}

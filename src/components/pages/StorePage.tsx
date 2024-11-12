@@ -8,9 +8,11 @@ import Modal from '../Modal';
 import AddNewRatingForm from '../form/AddNewRatingForm';
 import { fetchStores, storesType } from '../../features/stores/storesSlice';
 import { fetchEmployee } from '../../features/employees/employeesSlice';
-import { fetchRatings } from '../../features/rating/ratingSlice';
+import { fetchRatings, ratingType } from '../../features/rating/ratingSlice';
 import RatingDetailSkeleton from '../RatingDetailSkeleton';
 import TitleSkeleton from '../TitleSkeleton';
+import SortBy from '../UI/select/SortBy';
+import { useSortedRatings } from '../../hook/useRating';
 
 const StorePage = ({ getPath }: any) => {
   const { id } = useParams<{ id: string }>();
@@ -32,6 +34,7 @@ const StorePage = ({ getPath }: any) => {
     sort: '',
     query: '',
   });
+  console.log(filter);
 
   useEffect(() => {
     dispatch(fetchEmployee());
@@ -41,6 +44,18 @@ const StorePage = ({ getPath }: any) => {
 
   const store = stores.find((s: storesType) => s.id === id);
   const filteredEmployees = employees.filter((el) => store?.employees.includes(el.id));
+  const sortRatings = (ratings: ratingType[]) => {
+    if (!filter.sort) return ratings;
+
+    return [...ratings].sort((a, b) => {
+      if (filter.sort === 'date-asc') return a.date.localeCompare(b.date);
+      if (filter.sort === 'date-asc') return b.date.localeCompare(a.date);
+      if (filter.sort === 'time-asc') return a.time.localeCompare(b.time);
+      if (filter.sort === 'time-desc') return b.time.localeCompare(a.time);
+
+      return 0;
+    });
+  };
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -76,18 +91,31 @@ const StorePage = ({ getPath }: any) => {
 
       {filteredEmployees.map((el) => {
         const filteredRating = ratings.filter((r) => r.employeeId === el.id && r.store.id === id);
-
+        const sortedRatings = sortRatings(filteredRating);
         return (
           <Paper key={el.id} elevation={3} sx={{ marginBottom: 2, padding: 2 }}>
-            <Link to={`/employee/${el.id}`} style={{ textDecoration: 'none' }}>
-              {statusEmployeesData === 'pending' && <TitleSkeleton />}
-              <Typography variant="h6">{el.name}</Typography>
-            </Link>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Link to={`/employee/${el.id}`} style={{ textDecoration: 'none' }}>
+                {statusEmployeesData === 'pending' && <TitleSkeleton />}
+                <Typography variant="h6">{el.name}</Typography>
+              </Link>
+              <SortBy
+                value={filter}
+                onChange={setFilter}
+                defaultValue="Сортировка"
+                options={[
+                  { value: 'date-asc', name: 'По времени (по возрастанию)' },
+                  { value: 'date-desc', name: 'По времени  (по убыванию)' },
+                  { value: 'time-asc', name: 'По дате (по возрастанию)' },
+                  { value: 'time-desc', name: 'По дате  (по убыванию)' },
+                ]}
+              />
+            </Box>
             {statusRatingData === 'pending' &&
               [...Array(4)].map((_, idx) => <RatingDetailSkeleton key={idx} />)}
 
-            {filteredRating.length ? (
-              filteredRating.map((rating) => (
+            {sortedRatings.length ? (
+              sortedRatings.map((rating) => (
                 <RatingDetail
                   key={rating.id}
                   date={rating.date}

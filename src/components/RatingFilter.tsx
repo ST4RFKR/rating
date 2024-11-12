@@ -15,7 +15,7 @@ const RatingFilter = ({ filter, setFilter }: any) => {
         />
       </Typography>
 
-      <SearchInput value={filter} onChange={setFilter} placeholder="Поиск..." />
+      <SearchInput value={filter} onChange={setFilter} placeholder="Введите название магазина..." />
       <SortBy
         value={filter.sort}
         onChange={setFilter}
