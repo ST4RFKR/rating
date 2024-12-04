@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { fetchStores, storesType } from '../features/stores/storesSlice';
 import { AppDispatch, RootState } from '../redux/store';
 import { Button, IconButton, Tooltip } from '@mui/material';
@@ -8,19 +7,18 @@ import AddIcon from '@mui/icons-material/Add';
 import Modal from '../components/Modal';
 import { useDispatch } from 'react-redux';
 import AddStoreForm from '../components/form/AddStoreForm';
+import { useAppSelector } from '../hook/useAppSelector';
 
 const Main = ({ roleCurrentUser, getUsers }: any) => {
   const dispatch = useDispatch<AppDispatch>();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const stores = useSelector((state: RootState) => state.stores.stores);
+  const stores = useAppSelector((state: RootState) => state.stores.stores);
   useEffect(() => {
     dispatch(fetchStores());
-  }, [dispatch]);
-  useEffect(() => {
     getUsers();
-  }, []);
+  }, [dispatch]);
 
   return (
     <div>

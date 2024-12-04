@@ -257,3 +257,11 @@ const employees = [
     address: 'Город Г, Улица 2, д. 2',
   },
 ];
+
+const totalScores = {
+  '2024-11': {
+    employeeID: {
+      scores: [{ '01': 1 }, { '02': 2 }],
+    },
+  },
+};

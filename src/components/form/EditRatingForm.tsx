@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
-import { useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { useDispatch } from 'react-redux';
 import { chengeRating } from '../../features/rating/ratingSlice';
+import { useAppSelector } from '../../hook/useAppSelector';
 
 const EditRatingForm = ({ handleClose, ratingId }: any) => {
   const dispath = useDispatch<AppDispatch>();
-  const ratings = useSelector((state: RootState) => state.ratings.ratings);
+  const ratings = useAppSelector((state: RootState) => state.ratings.ratings);
   const currentData = ratings.find((el) => el.id === ratingId);
   const [ratingData, setRatingData] = useState({
     date: currentData?.date,

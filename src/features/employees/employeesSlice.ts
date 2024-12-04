@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { db } from '../../firebase/firebaseConfig';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, doc, getDocs, updateDoc } from 'firebase/firestore';
 
 export const fetchEmployee = createAsyncThunk(
   'employee/fetchEmployee',
@@ -10,6 +10,7 @@ export const fetchEmployee = createAsyncThunk(
       const querySnapshot = await getDocs(collection(db, 'employees'));
       const employees = querySnapshot.docs.map((doc) => {
         const data = doc.data();
+        console.log(data);
 
         return {
           id: doc.id,
@@ -28,6 +29,18 @@ export const fetchEmployee = createAsyncThunk(
       return employees;
     } catch (error: any) {
       return rejectWithValue(error.message || 'Ошибка при загрузке данных');
+    }
+  },
+);
+export const updateEmployee = createAsyncThunk(
+  'employee/fetchEmployee',
+  async ({ employeeId, newData }: any, { rejectWithValue }) => {
+    try {
+      const itemRef = doc(db, 'ratings', employeeId);
+      await updateDoc(itemRef, newData);
+      return { id: employeeId, ...newData };
+    } catch (error: any) {
+      return rejectWithValue(error.message);
     }
   },
 );
@@ -55,7 +68,9 @@ export type employeeType = {
   hireDate: string;
   email: string;
   phone: string;
-  performanceScores: [];
+  performanceScores: {
+    [key: string]: string[];
+  };
   averageScore: null;
   address: string;
 };

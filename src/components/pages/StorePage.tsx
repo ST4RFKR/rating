@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { Typography, Box, Paper, ButtonGroup, Button } from '@mui/material';
 import RatingDetail from '../RatingDetail';
@@ -13,6 +12,8 @@ import RatingDetailSkeleton from '../RatingDetailSkeleton';
 import TitleSkeleton from '../TitleSkeleton';
 import SortBy from '../UI/select/SortBy';
 import { useSortedRatings } from '../../hook/useRating';
+import { useAppSelector } from '../../hook/useAppSelector';
+import { useAppDispatch } from '../../hook/useAppDispatch';
 
 const StorePage = ({ getPath }: any) => {
   const { id } = useParams<{ id: string }>();
@@ -22,13 +23,13 @@ const StorePage = ({ getPath }: any) => {
     getPath(pathname);
   }, [pathname]);
 
-  const stores = useSelector((state: RootState) => state.stores.stores);
-  const { status: statusEmployeesData, employee: employees } = useSelector(
+  const stores = useAppSelector((state: RootState) => state.stores.stores);
+  const { status: statusEmployeesData, employee: employees } = useAppSelector(
     (state: RootState) => state.employees,
   );
-  const { status: statusRatingData, ratings } = useSelector((state: RootState) => state.ratings);
+  const { status: statusRatingData, ratings } = useAppSelector((state: RootState) => state.ratings);
 
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const [filter, setFilter] = useState({
     sort: '',

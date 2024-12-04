@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { TextField, Button, Box, Autocomplete } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../redux/store';
 import { createRating } from '../../features/rating/ratingSlice';
 import { v1 } from 'uuid';
 import { fetchEmployee } from '../../features/employees/employeesSlice';
 import { updateStoreEmployees } from '../../features/stores/storesSlice';
+import { useAppSelector } from '../../hook/useAppSelector';
+import { employeesSelector } from '../../features/employees/employeesSelector';
+import { useAppDispatch } from '../../hook/useAppDispatch';
 
 const AddNewRatingForm = ({ store, handleClose }: any) => {
-  const employees = useSelector((state: RootState) => state.employees.employee);
-  const dispatch = useDispatch<AppDispatch>();
+  const employees = useAppSelector(employeesSelector);
+  const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(fetchEmployee());
   }, [dispatch]);
@@ -47,7 +48,7 @@ const AddNewRatingForm = ({ store, handleClose }: any) => {
       };
       await dispatch(updateStoreEmployees(updatedStore));
     }
-    dispatch(createRating({ ...ratingData, store: {id: store.id, name: store.name} }));
+    dispatch(createRating({ ...ratingData, store: { id: store.id, name: store.name } }));
     setRatingData({
       id: v1(),
       date: '',

@@ -9,7 +9,9 @@ import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth, db } from './firebase/firebaseConfig';
 
 import { collection, DocumentData, getDocs } from 'firebase/firestore';
-import AuthPage from "./components/pages/auth/AuthPage";
+import AuthPage from './components/pages/auth/AuthPage';
+import Stats from './components/pages/Stats';
+import { Header } from './components/Header';
 
 function App() {
   const [users, setUsers] = useState<DocumentData[]>([]);
@@ -50,11 +52,21 @@ function App() {
       alert(error.message);
     }
   };
+  const [authChecked, setAuthChecked] = useState(false);
+
   useEffect(() => {
-    if (user === null) {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setAuthChecked(true);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (authChecked && user === null) {
       navigate('/');
     }
-  }, [user, navigate]);
+  }, [user, authChecked, navigate]);
 
   function getPath(path: string) {
     setPath(path);
@@ -63,12 +75,8 @@ function App() {
   return (
     <div className="App">
       <Box>
-        {user && (
-          <Button sx={{ m: '10px' }} variant="outlined" onClick={handleLogout}>
-            Logout
-          </Button>
-        )}
         <Box>
+          <Header handleLogout={handleLogout} />
           <Routes>
             <Route path="/" element={user ? <Navigate to="/main" /> : <AuthPage />} />
             <Route
@@ -77,6 +85,8 @@ function App() {
             />
             <Route path="/store/:id" element={<StorePage getPath={getPath} />} />
             <Route path="/employee/:id" element={<EmployeePage path={path} />} />
+            <Route path="/stats" element={<Stats />} />
+            <Route path="*" element={<div>Error</div>} />
           </Routes>
         </Box>
       </Box>

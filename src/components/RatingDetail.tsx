@@ -1,12 +1,11 @@
 import React from 'react';
 import { Box, Grid, Typography, Divider, IconButton, ListItem } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
-import { useDispatch } from 'react-redux';
+
 import { deleteRating } from '../features/rating/ratingSlice';
 import Modal from './Modal';
 import EditRatingForm from './form/EditRatingForm';
-import { storesType } from '../features/stores/storesSlice';
-import { AppDispatch } from '../redux/store';
+import { useAppDispatch } from '../hook/useAppDispatch';
 
 type RatingDetailProps = {
   date: string;
@@ -31,7 +30,7 @@ const RatingDetail = ({
   ratingId,
 }: RatingDetailProps) => {
   const [open, setOpen] = React.useState(false);
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);

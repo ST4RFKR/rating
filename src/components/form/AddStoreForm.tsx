@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { TextField, Button, Box, Autocomplete } from '@mui/material';
-import { createStore, storesType } from '../../features/stores/storesSlice';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
-import { employeeType, fetchEmployee } from '../../features/employees/employeesSlice';
-import { AppDispatch, RootState } from '../../redux/store';
+import { createStore } from '../../features/stores/storesSlice';
+import { fetchEmployee } from '../../features/employees/employeesSlice';
+import { useAppDispatch } from '../../hook/useAppDispatch';
+import { useAppSelector } from '../../hook/useAppSelector';
+import { employeesSelector } from '../../features/employees/employeesSelector';
+
 type AddStoreForm = {
   handleClose: (value: boolean) => void;
 };
 const AddStoreForm = ({ handleClose }: AddStoreForm) => {
-  const employees = useSelector((state: RootState) => state.employees.employee);
-  const dispatch = useDispatch<AppDispatch>();
+  const employees = useAppSelector(employeesSelector);
+  const dispatch = useAppDispatch();
   const [storeData, setStoreData] = useState({
     id: '',
     name: '',

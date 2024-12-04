@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { Typography, Box, Button } from '@mui/material';
 import RatingDetail from '../RatingDetail'; // Используем тот же компонент
@@ -12,20 +11,24 @@ import RatingFilter from '../RatingFilter';
 import { useRating } from '../../hook/useRating';
 import RatingDetailSkeleton from '../RatingDetailSkeleton';
 import EmployeInfoSkeleton from '../EmployeInfoSkeleton';
+import { useAppDispatch } from '../../hook/useAppDispatch';
+import { useAppSelector } from '../../hook/useAppSelector';
+import { employeesSelector } from '../../features/employees/employeesSelector';
+import { ratingSelector } from '../../features/rating/ratingSelector';
 
 const EmployeePage = ({ path }: any) => {
   const { id } = useParams<{ id: string }>();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(fetchEmployee());
     dispatch(fetchRatings());
   }, [dispatch]);
 
-  const { status: statusEmployeeDAta, employee: employees } = useSelector(
-    (state: RootState) => state.employees,
-  );
-  const { status: statusRatingData, ratings } = useSelector((state: RootState) => state.ratings);
+  const employees = useAppSelector(employeesSelector);
+  const statusRatingData = useAppSelector((state: RootState) => state.ratings.status);
+  const statusEmployeeData = useAppSelector((state: RootState) => state.employees.status);
+  const ratings = useAppSelector(ratingSelector);
 
   const employee = employees.find((el) => el.id === id);
   const employeeRatings = ratings.filter((rating) => rating.employeeId === id);
@@ -54,7 +57,7 @@ const EmployeePage = ({ path }: any) => {
       </Box>
 
       <Box sx={{ marginBottom: 2 }}>
-        {statusEmployeeDAta === 'pending' ? (
+        {statusEmployeeData === 'pending' ? (
           <EmployeInfoSkeleton />
         ) : (
           <EmployeInfo employee={employee} />
