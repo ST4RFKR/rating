@@ -1,17 +1,18 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { db } from '../../firebase/firebaseConfig';
 import { collection, doc, getDocs, updateDoc } from 'firebase/firestore';
+import { Dispatch } from 'redux';
+import { setAppStatus } from '../../appSlice';
 
 export const fetchEmployee = createAsyncThunk(
   'employee/fetchEmployee',
-  async (_, { rejectWithValue }) => {
+  async (_, { dispatch, rejectWithValue }) => {
     try {
+      dispatch(setAppStatus({ status: 'loading' }));
       const querySnapshot = await getDocs(collection(db, 'employees'));
       const employees = querySnapshot.docs.map((doc) => {
         const data = doc.data();
-        console.log(data);
-
+        dispatch(setAppStatus({ status: 'succeeded' }));
         return {
           id: doc.id,
           name: data.name || '',
@@ -34,10 +35,12 @@ export const fetchEmployee = createAsyncThunk(
 );
 export const updateEmployee = createAsyncThunk(
   'employee/fetchEmployee',
-  async ({ employeeId, newData }: any, { rejectWithValue }) => {
+  async ({ employeeId, newData }: any, { dispatch, rejectWithValue }) => {
     try {
+      dispatch(setAppStatus({ status: 'loading' }));
       const itemRef = doc(db, 'ratings', employeeId);
       await updateDoc(itemRef, newData);
+      dispatch(setAppStatus({ status: 'succeeded' }));
       return { id: employeeId, ...newData };
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -100,6 +103,6 @@ export const employeesSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { addEmployee } = employeesSlice.actions;
 
+export const { addEmployee } = employeesSlice.actions;
 export default employeesSlice.reducer;

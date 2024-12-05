@@ -1,15 +1,17 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { addDoc, collection, deleteDoc, doc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebaseConfig';
+import { setAppStatus } from '../../appSlice';
 
 export const fetchRatings = createAsyncThunk(
   'employee/fetchRatings',
-  async (_, { rejectWithValue }) => {
+  async (_, { dispatch, rejectWithValue }) => {
     try {
+      dispatch(setAppStatus({ status: 'loading' }));
       const querySnapshot = await getDocs(collection(db, 'ratings'));
       const ratings = querySnapshot.docs.map((doc) => {
         const data = doc.data();
-
+        dispatch(setAppStatus({ status: 'succeeded' }));
         return {
           id: doc.id,
           employeeId: data.employeeId || '',
@@ -33,9 +35,11 @@ export const fetchRatings = createAsyncThunk(
 );
 export const createRating = createAsyncThunk(
   'ratings/createRatings',
-  async (newRating: ratingType, { rejectWithValue }) => {
+  async (newRating: ratingType, { dispatch, rejectWithValue }) => {
     try {
+      dispatch(setAppStatus({ status: 'loading' }));
       await setDoc(doc(db, 'ratings', newRating.id), newRating);
+      dispatch(setAppStatus({ status: 'succeeded' }));
       return newRating;
     } catch (error: any) {
       return rejectWithValue(error.message || 'Ошибка при добавлении нового рейтинга');
@@ -44,10 +48,12 @@ export const createRating = createAsyncThunk(
 );
 export const deleteRating = createAsyncThunk(
   'ratings/deleteRating',
-  async (ratingId: string, { rejectWithValue }) => {
+  async (ratingId: string, { dispatch, rejectWithValue }) => {
     try {
+      dispatch(setAppStatus({ status: 'loading' }));
       const itemRef = doc(db, 'ratings', ratingId);
       await deleteDoc(itemRef);
+      dispatch(setAppStatus({ status: 'succeeded' }));
       return ratingId;
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -57,10 +63,12 @@ export const deleteRating = createAsyncThunk(
 
 export const chengeRating = createAsyncThunk(
   'ratings/updateRating',
-  async ({ ratingId, newData }: any, { rejectWithValue }) => {
+  async ({ ratingId, newData }: any, { dispatch, rejectWithValue }) => {
     try {
+      dispatch(setAppStatus({ status: 'loading' }));
       const itemRef = doc(db, 'ratings', ratingId);
       await updateDoc(itemRef, newData);
+      dispatch(setAppStatus({ status: 'succeeded' }));
       return { id: ratingId, ...newData };
     } catch (error: any) {
       return rejectWithValue(error.message);

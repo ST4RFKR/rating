@@ -3,14 +3,17 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { addDoc, collection, doc, getDocs, setDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebaseConfig';
+import { setAppStatus } from '../../appSlice';
 
 export const fetchStores = createAsyncThunk(
   'stores/fetchStores',
-  async (_, { rejectWithValue }) => {
+  async (_, { dispatch, rejectWithValue }) => {
     try {
+      dispatch(setAppStatus({ status: 'loading' }));
       const querySnapshot = await getDocs(collection(db, 'stores'));
       const stores = querySnapshot.docs.map((doc) => {
         const data = doc.data();
+        dispatch(setAppStatus({ status: 'succeeded' }));
 
         return {
           id: doc.id,
@@ -28,9 +31,11 @@ export const fetchStores = createAsyncThunk(
 );
 export const createStore = createAsyncThunk(
   'stores/createStore',
-  async (newStore: storesType, { rejectWithValue }) => {
+  async (newStore: storesType, { dispatch, rejectWithValue }) => {
     try {
+      dispatch(setAppStatus({ status: 'loading' }));
       await setDoc(doc(db, 'stores', newStore.id), newStore);
+      dispatch(setAppStatus({ status: 'succeeded' }));
       return newStore;
     } catch (error: any) {
       return rejectWithValue(error.message || 'Ошибка при добавлении нового магазина');
@@ -39,9 +44,11 @@ export const createStore = createAsyncThunk(
 );
 export const updateStoreEmployees = createAsyncThunk(
   'stores/updateStoreEmployees',
-  async (updatedStore: storesType, { rejectWithValue }) => {
+  async (updatedStore: storesType, { dispatch, rejectWithValue }) => {
     try {
+      dispatch(setAppStatus({ status: 'loading' }));
       await setDoc(doc(db, 'stores', updatedStore.id), updatedStore, { merge: true });
+      dispatch(setAppStatus({ status: 'succeeded' }));
       return updatedStore;
     } catch (error: any) {
       return rejectWithValue(error.message || 'Ошибка при обновлении сотрудников магазина');

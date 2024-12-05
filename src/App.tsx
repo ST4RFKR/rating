@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { HashRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
 import './App.css';
-import { Box, Button } from '@mui/material';
+import { Box, Button, CssBaseline, ThemeProvider } from '@mui/material';
 import Main from './pages/Main';
 import StorePage from './components/pages/StorePage';
 import EmployeePage from './components/pages/EmployeePage';
@@ -12,12 +12,22 @@ import { collection, DocumentData, getDocs } from 'firebase/firestore';
 import AuthPage from './components/pages/auth/AuthPage';
 import Stats from './components/pages/Stats';
 import { Header } from './components/Header';
+import { useSelector } from 'react-redux';
+import { RootState } from './redux/store';
+import { changeTheme, ThemeMode } from './appSlice';
+import { getTheme } from './theme';
+import { useAppDispatch } from './hook/useAppDispatch';
 
 function App() {
+  const themeMode = useSelector<RootState, ThemeMode>((state) => state.app.themeMode);
+  const dispatch = useAppDispatch();
+  const theme = getTheme('light');
+  const changeModeHandler = () => {
+    dispatch(changeTheme({ themeMode: themeMode === 'light' ? 'dark' : 'light' }));
+  };
   const [users, setUsers] = useState<DocumentData[]>([]);
   const [roleCurrentUser, setRoleCurrentUser] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
-
   const [path, setPath] = useState<any>('');
 
   async function getUsers() {
@@ -74,22 +84,25 @@ function App() {
 
   return (
     <div className="App">
-      <Box>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
         <Box>
-          <Header handleLogout={handleLogout} />
-          <Routes>
-            <Route path="/" element={user ? <Navigate to="/main" /> : <AuthPage />} />
-            <Route
-              path="/main"
-              element={<Main roleCurrentUser={roleCurrentUser} getUsers={getUsers} />}
-            />
-            <Route path="/store/:id" element={<StorePage getPath={getPath} />} />
-            <Route path="/employee/:id" element={<EmployeePage path={path} />} />
-            <Route path="/stats" element={<Stats />} />
-            <Route path="*" element={<div>Error</div>} />
-          </Routes>
+          <Box>
+            <Header handleLogout={handleLogout} changeModeHandler={changeModeHandler} user={user} />
+            <Routes>
+              <Route path="/" element={user ? <Navigate to="/main" /> : <AuthPage />} />
+              <Route
+                path="/main"
+                element={<Main roleCurrentUser={roleCurrentUser} getUsers={getUsers} />}
+              />
+              <Route path="/store/:id" element={<StorePage getPath={getPath} />} />
+              <Route path="/employee/:id" element={<EmployeePage path={path} />} />
+              <Route path="/stats" element={<Stats />} />
+              <Route path="*" element={<div>Error</div>} />
+            </Routes>
+          </Box>
         </Box>
-      </Box>
+      </ThemeProvider>
     </div>
   );
 }

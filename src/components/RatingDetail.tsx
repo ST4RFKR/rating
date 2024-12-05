@@ -6,6 +6,7 @@ import { deleteRating } from '../features/rating/ratingSlice';
 import Modal from './Modal';
 import EditRatingForm from './form/EditRatingForm';
 import { useAppDispatch } from '../hook/useAppDispatch';
+import { useAppSelector } from '../hook/useAppSelector';
 
 type RatingDetailProps = {
   date: string;
@@ -30,6 +31,8 @@ const RatingDetail = ({
   ratingId,
 }: RatingDetailProps) => {
   const [open, setOpen] = React.useState(false);
+  const notification = useAppSelector((state) => state.app.notification);
+
   const dispatch = useAppDispatch();
 
   const handleOpen = () => setOpen(true);
@@ -79,10 +82,10 @@ const RatingDetail = ({
       {/* Кнопки редактирования и удаления в правом верхнем углу */}
       <Box sx={{ position: 'absolute', top: 8, right: 8 }}>
         <IconButton onClick={handleOpen} sx={{ marginRight: 1 }}>
-          <EditIcon />
+          <EditIcon sx={{ opacity: 0.9, fill: 'gray' }} />
         </IconButton>
         <IconButton onClick={handleDelete}>
-          <DeleteIcon />
+          <DeleteIcon sx={{ opacity: 0.9, fill: 'gray' }} />
         </IconButton>
       </Box>
 
