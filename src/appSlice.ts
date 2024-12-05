@@ -5,7 +5,7 @@ export type RequestStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
 export type Notification = {
   message: string;
   open: boolean;
-  severity: 'success' | 'error' | 'info' | 'warning'; // типы уведомлений
+  severity: 'success' | 'error' | 'info' | 'warning';
 };
 
 export const appSlice = createSlice({
@@ -44,8 +44,11 @@ export const appSlice = createSlice({
       state.notification.message = '';
     },
   },
+  selectors: {
+    notificationSelector: (state) => state.notification,
+  },
 });
-
+export const { notificationSelector } = appSlice.selectors;
 export const { changeTheme, setAppError, setAppStatus, showNotification, hideNotification } =
   appSlice.actions;
 export const appReducer = appSlice.reducer;

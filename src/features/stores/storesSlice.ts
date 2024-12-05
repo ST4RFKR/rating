@@ -3,7 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { addDoc, collection, doc, getDocs, setDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebaseConfig';
-import { setAppStatus } from '../../appSlice';
+import { setAppStatus, showNotification } from '../../appSlice';
 
 export const fetchStores = createAsyncThunk(
   'stores/fetchStores',
@@ -34,6 +34,7 @@ export const createStore = createAsyncThunk(
   async (newStore: storesType, { dispatch, rejectWithValue }) => {
     try {
       dispatch(setAppStatus({ status: 'loading' }));
+      dispatch(showNotification({ message: 'Новий магазин створено!', severity: 'success' }));
       await setDoc(doc(db, 'stores', newStore.id), newStore);
       dispatch(setAppStatus({ status: 'succeeded' }));
       return newStore;
@@ -47,6 +48,7 @@ export const updateStoreEmployees = createAsyncThunk(
   async (updatedStore: storesType, { dispatch, rejectWithValue }) => {
     try {
       dispatch(setAppStatus({ status: 'loading' }));
+
       await setDoc(doc(db, 'stores', updatedStore.id), updatedStore, { merge: true });
       dispatch(setAppStatus({ status: 'succeeded' }));
       return updatedStore;
@@ -138,9 +140,13 @@ export const storesSlice = createSlice({
         }
       });
   },
+  selectors: {
+    storesSelector: (state) => state.stores,
+  },
 });
 
 // Action creators are generated for each case reducer function
 export const {} = storesSlice.actions;
+export const { storesSelector } = storesSlice.selectors;
 
 export default storesSlice.reducer;

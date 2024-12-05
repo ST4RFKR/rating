@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { AppDispatch, RootState } from '../../redux/store';
-import { Typography, Box, Paper, ButtonGroup, Button } from '@mui/material';
+import { Typography, Box, Paper, ButtonGroup, Button, Snackbar, Alert } from '@mui/material';
 import RatingDetail from '../RatingDetail';
 import Modal from '../Modal';
 import AddNewRatingForm from '../form/AddNewRatingForm';
@@ -11,9 +11,12 @@ import { fetchRatings, ratingType } from '../../features/rating/ratingSlice';
 import RatingDetailSkeleton from '../RatingDetailSkeleton';
 import TitleSkeleton from '../TitleSkeleton';
 import SortBy from '../UI/select/SortBy';
-import { useSortedRatings } from '../../hook/useRating';
+
 import { useAppSelector } from '../../hook/useAppSelector';
 import { useAppDispatch } from '../../hook/useAppDispatch';
+import { employeesSelector } from '../../features/employees/employeesSelector';
+import { ratingSelector } from '../../features/rating/ratingSelector';
+import { hideNotification, notificationSelector } from '../../appSlice';
 
 const StorePage = ({ getPath }: any) => {
   const { id } = useParams<{ id: string }>();
@@ -24,10 +27,11 @@ const StorePage = ({ getPath }: any) => {
   }, [pathname]);
 
   const stores = useAppSelector((state: RootState) => state.stores.stores);
-  const { status: statusEmployeesData, employee: employees } = useAppSelector(
-    (state: RootState) => state.employees,
-  );
-  const { status: statusRatingData, ratings } = useAppSelector((state: RootState) => state.ratings);
+  const employees = useAppSelector(employeesSelector);
+  const ratings = useAppSelector(ratingSelector);
+
+  const statusEmployeesData = useAppSelector((state) => state.employees.status);
+  const statusRatingData = useAppSelector((state) => state.ratings.status);
 
   const dispatch = useAppDispatch();
 

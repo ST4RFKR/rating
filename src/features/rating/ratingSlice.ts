@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { addDoc, collection, deleteDoc, doc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebaseConfig';
-import { setAppStatus } from '../../appSlice';
+import { setAppStatus, showNotification } from '../../appSlice';
 
 export const fetchRatings = createAsyncThunk(
   'employee/fetchRatings',
@@ -38,6 +38,7 @@ export const createRating = createAsyncThunk(
   async (newRating: ratingType, { dispatch, rejectWithValue }) => {
     try {
       dispatch(setAppStatus({ status: 'loading' }));
+      dispatch(showNotification({ message: 'Рейтинг успішно створено!', severity: 'success' }));
       await setDoc(doc(db, 'ratings', newRating.id), newRating);
       dispatch(setAppStatus({ status: 'succeeded' }));
       return newRating;
@@ -52,6 +53,7 @@ export const deleteRating = createAsyncThunk(
     try {
       dispatch(setAppStatus({ status: 'loading' }));
       const itemRef = doc(db, 'ratings', ratingId);
+      dispatch(showNotification({ message: 'Дані успішно видалено!', severity: 'success' }));
       await deleteDoc(itemRef);
       dispatch(setAppStatus({ status: 'succeeded' }));
       return ratingId;
@@ -66,6 +68,7 @@ export const chengeRating = createAsyncThunk(
   async ({ ratingId, newData }: any, { dispatch, rejectWithValue }) => {
     try {
       dispatch(setAppStatus({ status: 'loading' }));
+      dispatch(showNotification({ message: 'Дані успішно оновлено!', severity: 'success' }));
       const itemRef = doc(db, 'ratings', ratingId);
       await updateDoc(itemRef, newData);
       dispatch(setAppStatus({ status: 'succeeded' }));

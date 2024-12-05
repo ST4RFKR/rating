@@ -28,6 +28,11 @@ export const Header = ({ handleLogout, changeModeHandler, user }: any) => {
                 Магазини
               </Button>
             </Link>
+            <Link to={'/employees'}>
+              <Button variant="contained" color="secondary">
+                Працівники
+              </Button>
+            </Link>
             <Link to={'/stats'}>
               <Button variant="contained" color="secondary">
                 Статистика

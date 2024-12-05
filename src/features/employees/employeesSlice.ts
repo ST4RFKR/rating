@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { db } from '../../firebase/firebaseConfig';
 import { collection, doc, getDocs, updateDoc } from 'firebase/firestore';
 import { Dispatch } from 'redux';
-import { setAppStatus } from '../../appSlice';
+import { setAppStatus, showNotification } from '../../appSlice';
 
 export const fetchEmployee = createAsyncThunk(
   'employee/fetchEmployee',

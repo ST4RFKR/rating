@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { HashRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
 import './App.css';
-import { Box, Button, CssBaseline, ThemeProvider } from '@mui/material';
+import { Alert, Box, Button, CssBaseline, Snackbar, ThemeProvider } from '@mui/material';
 import Main from './pages/Main';
 import StorePage from './components/pages/StorePage';
 import EmployeePage from './components/pages/EmployeePage';
@@ -14,9 +14,11 @@ import Stats from './components/pages/Stats';
 import { Header } from './components/Header';
 import { useSelector } from 'react-redux';
 import { RootState } from './redux/store';
-import { changeTheme, ThemeMode } from './appSlice';
+import { changeTheme, hideNotification, notificationSelector, ThemeMode } from './appSlice';
 import { getTheme } from './theme';
 import { useAppDispatch } from './hook/useAppDispatch';
+import { useAppSelector } from './hook/useAppSelector';
+import EmployeesPage from './components/pages/EmployeesPage';
 
 function App() {
   const themeMode = useSelector<RootState, ThemeMode>((state) => state.app.themeMode);
@@ -82,6 +84,12 @@ function App() {
     setPath(path);
   }
 
+  const notification = useAppSelector(notificationSelector);
+
+  const handleCloseNotification = () => {
+    dispatch(hideNotification());
+  };
+
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
@@ -96,11 +104,23 @@ function App() {
                 element={<Main roleCurrentUser={roleCurrentUser} getUsers={getUsers} />}
               />
               <Route path="/store/:id" element={<StorePage getPath={getPath} />} />
-              <Route path="/employee/:id" element={<EmployeePage path={path} />} />
+              <Route path="/employees" element={<EmployeesPage />} />
+              <Route path="/employees/:id" element={<EmployeePage path={path} />} />
               <Route path="/stats" element={<Stats />} />
               <Route path="*" element={<div>Error</div>} />
             </Routes>
           </Box>
+          <Snackbar
+            open={notification.open}
+            autoHideDuration={6000}
+            onClose={handleCloseNotification}>
+            <Alert
+              onClose={handleCloseNotification}
+              severity={notification.severity}
+              sx={{ width: '100%' }}>
+              {notification.message}
+            </Alert>
+          </Snackbar>
         </Box>
       </ThemeProvider>
     </div>
