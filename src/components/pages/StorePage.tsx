@@ -102,7 +102,18 @@ const StorePage = ({ getPath }: any) => {
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Link to={`/employees/${el.id}`} style={{ textDecoration: 'none' }}>
                 {statusEmployeesData === 'pending' && <TitleSkeleton />}
-                <Typography variant="h6">{el.name}</Typography>
+                <Typography
+                  sx={{
+                    cursor: 'pointer', // Указывает, что элемент кликабельный
+                    transition: 'color 0.3s, text-decoration 0.3s, transform 0.3s', // Добавляем анимацию увеличения
+                    '&:hover': {
+                      color: 'primary.main', // Меняем цвет текста при наведении
+                      transform: 'scale(1.05)', // Увеличиваем текст на 5%
+                    },
+                  }}
+                  variant="h6">
+                  {el.name}
+                </Typography>
               </Link>
               <SortBy
                 value={filter}
