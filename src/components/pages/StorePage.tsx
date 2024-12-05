@@ -100,7 +100,7 @@ const StorePage = ({ getPath }: any) => {
         return (
           <Paper key={el.id} elevation={3} sx={{ marginBottom: 2, padding: 2 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Link to={`/employee/${el.id}`} style={{ textDecoration: 'none' }}>
+              <Link to={`/employees/${el.id}`} style={{ textDecoration: 'none' }}>
                 {statusEmployeesData === 'pending' && <TitleSkeleton />}
                 <Typography variant="h6">{el.name}</Typography>
               </Link>
