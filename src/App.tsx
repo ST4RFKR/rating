@@ -23,7 +23,7 @@ import EmployeesPage from './components/pages/EmployeesPage';
 function App() {
   const themeMode = useSelector<RootState, ThemeMode>((state) => state.app.themeMode);
   const dispatch = useAppDispatch();
-  const theme = getTheme('light');
+  const theme = getTheme(themeMode);
   const changeModeHandler = () => {
     dispatch(changeTheme({ themeMode: themeMode === 'light' ? 'dark' : 'light' }));
   };
