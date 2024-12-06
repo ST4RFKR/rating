@@ -24,6 +24,7 @@ import html2canvas from 'html2canvas';
 import { useAppDispatch } from '../../hook/useAppDispatch';
 import { fetchRatings } from '../../features/rating/ratingSlice';
 import { fetchEmployee } from '../../features/employees/employeesSlice';
+import DynamicText from '../DynamicText';
 
 const Stats = () => {
   const employees = useAppSelector(employeesSelector);
@@ -41,6 +42,11 @@ const Stats = () => {
     dispatch(fetchEmployee());
     dispatch(fetchRatings());
   }, [dispatch]);
+  useEffect(() => {
+    if (localStorage.getItem('filterEfficiency')) {
+      setFilterEfficiency(localStorage.getItem('filterEfficiency') === 'true');
+    }
+  }, []);
 
   const tableRef = useRef<HTMLDivElement>(null);
 
@@ -75,17 +81,20 @@ const Stats = () => {
       const dataUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.href = dataUrl;
-      link.download = `Employee_Stats_${filterMonth || 'Unknown'}.png`;
+      link.download = `Employee_Stats_${String(Date.now()).slice(9) || 'Unknown'}.png`;
       link.click();
     }
   };
-
+  const title = `Статистика по працівникам за ${
+    filterMonth ? options.find((el) => el.value === filterMonth)?.name : options[0].name
+  } 2024`;
   return (
     <Box sx={{ p: 2 }}>
       <Typography variant="h4" gutterBottom>
         Статистика по працівникам за{' '}
         {filterMonth ? options.find((el) => el.value === filterMonth)?.name : options[0].name} 2024
       </Typography>
+      <DynamicText variant="h4" title={title} gutterBottom />
 
       <Box sx={{ mb: 2 }}>
         <Button sx={{ mb: '10px' }} variant="contained" color="secondary" onClick={makeScreenshot}>
@@ -98,7 +107,9 @@ const Stats = () => {
             id="demo-simple-select"
             value={filterMonth}
             label="Вибрати місяць"
-            onChange={(e) => setFilterMonth(e.target.value)}>
+            onChange={(e) => {
+              setFilterMonth(e.target.value);
+            }}>
             {options.map((option) => (
               <MenuItem key={option.value} value={option.value}>
                 {option.name}
@@ -114,11 +125,14 @@ const Stats = () => {
           control={
             <Checkbox
               checked={filterEfficiency}
-              onChange={() => setFilterEfficiency(!filterEfficiency)}
+              onChange={() => {
+                localStorage.setItem('filterEfficiency', String(!filterEfficiency));
+                setFilterEfficiency(!filterEfficiency);
+              }}
               color="primary"
             />
           }
-          label="Фильтровать и сортировать по эффективности"
+          label="Cортировать по эффективности"
         />
       </Box>
 
