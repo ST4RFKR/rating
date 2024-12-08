@@ -16,6 +16,7 @@ const EditRatingForm = ({ handleClose, ratingId }: any) => {
     comment: currentData?.comment,
     videoUrl: currentData?.videoUrl,
   });
+
   const changeRatingData = (params: string) => {
     return (e: any) => {
       const value = params === 'rating' ? +e.target.value : e.target.value;

@@ -1,38 +1,37 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { db } from '../../firebase/firebaseConfig';
-import { collection, doc, getDocs, updateDoc } from 'firebase/firestore';
-import { Dispatch } from 'redux';
-import { setAppStatus, showNotification } from '../../appSlice';
+import { doc, updateDoc } from 'firebase/firestore';
+import { setAppStatus } from '../../appSlice';
 
-export const fetchEmployee = createAsyncThunk(
-  'employee/fetchEmployee',
-  async (_, { dispatch, rejectWithValue }) => {
-    try {
-      dispatch(setAppStatus({ status: 'loading' }));
-      const querySnapshot = await getDocs(collection(db, 'employees'));
-      const employees = querySnapshot.docs.map((doc) => {
-        const data = doc.data();
-        dispatch(setAppStatus({ status: 'succeeded' }));
-        return {
-          id: doc.id,
-          name: data.name || '',
-          currentStoreId: data.currentStoreId || '',
-          position: data.position || '',
-          hireDate: data.hireDate || '',
-          email: data.email || '',
-          phone: data.phone || '',
-          performanceScores: data.performanceScores || [],
-          averageScore: data.averageScore || null,
-          address: data.address,
-        } as employeeType;
-      });
+// export const fetchEmployee = createAsyncThunk(
+//   'employee/fetchEmployee',
+//   async (_, { dispatch, rejectWithValue }) => {
+//     try {
+//       dispatch(setAppStatus({ status: 'loading' }));
+//       const querySnapshot = await getDocs(collection(db, 'employees'));
+//       const employees = querySnapshot.docs.map((doc) => {
+//         const data = doc.data();
+//         dispatch(setAppStatus({ status: 'succeeded' }));
+//         return {
+//           id: doc.id,
+//           name: data.name || '',
+//           currentStoreId: data.currentStoreId || '',
+//           position: data.position || '',
+//           hireDate: data.hireDate || '',
+//           email: data.email || '',
+//           phone: data.phone || '',
+//           performanceScores: data.performanceScores || [],
+//           averageScore: data.averageScore || null,
+//           address: data.address,
+//         } as employeeType;
+//       });
 
-      return employees;
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Ошибка при загрузке данных');
-    }
-  },
-);
+//       return employees;
+//     } catch (error: any) {
+//       return rejectWithValue(error.message || 'Ошибка при загрузке данных');
+//     }
+//   },
+// );
 export const updateEmployee = createAsyncThunk(
   'employee/fetchEmployee',
   async ({ employeeId, newData }: any, { dispatch, rejectWithValue }) => {
@@ -91,14 +90,14 @@ export const employeesSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder
-      .addCase(fetchEmployee.pending, (state) => {
-        state.status = 'pending';
-      })
-      .addCase(fetchEmployee.fulfilled, (state: initialStateType, action) => {
-        state.status = 'succeeded';
-        state.employee = action.payload;
-      });
+    // builder
+    //   .addCase(fetchEmployee.pending, (state) => {
+    //     state.status = 'pending';
+    //   })
+    //   .addCase(fetchEmployee.fulfilled, (state: initialStateType, action) => {
+    //     state.status = 'succeeded';
+    //     state.employee = action.payload;
+    //   });
   },
 });
 
@@ -106,3 +105,16 @@ export const employeesSlice = createSlice({
 
 export const { addEmployee } = employeesSlice.actions;
 export default employeesSlice.reducer;
+
+export type Employee = {
+  id: string; // Уникальный идентификатор сотрудника
+  name: string; // Имя сотрудника
+  currentStoreId: string; // Идентификатор магазина, где работает сотрудник
+  address: string; // Адрес сотрудника
+  averageScore: string | null; // Средний балл (если пустой, то может быть null или пустой строкой)
+  email: string; // Электронная почта
+  hireDate: string; // Дата найма
+  phone: string; // Номер телефона
+  position: string; // Должность
+  performanceScores: number[];
+};

@@ -7,7 +7,6 @@ import { Box, LinearProgress, Typography } from '@mui/material';
 import { useAppSelector } from '../hook/useAppSelector';
 import NavButtons from './NavButtons';
 import MobileMenu from './MobileMenu';
-import GradeIcon from '@mui/icons-material/Grade';
 
 export const Header = ({ handleLogout, changeModeHandler, user }: any) => {
   const appStatus = useAppSelector((state) => state.app.status);
@@ -17,7 +16,7 @@ export const Header = ({ handleLogout, changeModeHandler, user }: any) => {
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
         {user && <MobileMenu handleLogout={handleLogout} />}
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <GradeIcon />
+          <Box sx={{ fontSize: '24px', marginRight: '10px' }}>🏵️</Box>
           <Typography variant="h5" sx={{ flexGrow: 1, textAlign: 'center' }}>
             Ефективність
           </Typography>

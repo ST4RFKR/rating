@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { AppDispatch, RootState } from '../../redux/store';
-import { Typography, Box, Paper, ButtonGroup, Button, Snackbar, Alert } from '@mui/material';
+import {
+  Typography,
+  Box,
+  Paper,
+  ButtonGroup,
+  Button,
+  Snackbar,
+  Alert,
+  IconButton,
+} from '@mui/material';
 import RatingDetail from '../RatingDetail';
 import Modal from '../Modal';
 import AddNewRatingForm from '../form/AddNewRatingForm';
-import { fetchStores, storesType } from '../../features/stores/storesSlice';
-import { fetchEmployee } from '../../features/employees/employeesSlice';
+import { fetchStores, storesType, updateStoreEmployees } from '../../features/stores/storesSlice';
 import { fetchRatings, ratingType } from '../../features/rating/ratingSlice';
 import RatingDetailSkeleton from '../RatingDetailSkeleton';
 import TitleSkeleton from '../TitleSkeleton';
@@ -16,7 +24,10 @@ import { useAppSelector } from '../../hook/useAppSelector';
 import { useAppDispatch } from '../../hook/useAppDispatch';
 import { employeesSelector } from '../../features/employees/employeesSelector';
 import { ratingSelector } from '../../features/rating/ratingSelector';
-import { hideNotification, notificationSelector } from '../../appSlice';
+import { hideNotification, notificationSelector, showNotification } from '../../appSlice';
+import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
+import { arrayRemove, doc, getFirestore, updateDoc } from 'firebase/firestore';
+import { Delete as DeleteIcon } from '@mui/icons-material';
 
 const StorePage = ({ getPath }: any) => {
   const { id } = useParams<{ id: string }>();
@@ -25,9 +36,10 @@ const StorePage = ({ getPath }: any) => {
   useEffect(() => {
     getPath(pathname);
   }, [pathname]);
+  // Ваш компонент или обработчик
 
   const stores = useAppSelector((state: RootState) => state.stores.stores);
-  const employees = useAppSelector(employeesSelector);
+  const { data: employees } = useGetEmployeesQuery();
   const ratings = useAppSelector(ratingSelector);
 
   const statusEmployeesData = useAppSelector((state) => state.employees.status);
@@ -39,16 +51,14 @@ const StorePage = ({ getPath }: any) => {
     sort: '',
     query: '',
   });
-  console.log(filter);
 
   useEffect(() => {
-    dispatch(fetchEmployee());
     dispatch(fetchRatings());
     dispatch(fetchStores());
   }, [dispatch]);
 
   const store = stores.find((s: storesType) => s.id === id);
-  const filteredEmployees = employees.filter((el) => store?.employees.includes(el.id));
+  const filteredEmployees = employees?.filter((el) => store?.employees.includes(el.id));
   const sortRatings = (ratings: ratingType[]) => {
     if (!filter.sort) return ratings;
 
@@ -72,7 +82,40 @@ const StorePage = ({ getPath }: any) => {
       </Typography>
     );
   }
+  const removeEmployee = (payload: { storeId: string; employeeId: string }) => {
+    const { storeId, employeeId } = payload;
+    const currentStore = stores.find((el) => el.id === storeId);
+    const ratingsLength = ratings.filter((el) => el.employeeId === employeeId).length;
+    // Проверяем, что магазин найден
+    if (!currentStore) {
+      console.error('Store not found!');
+      return;
+    }
 
+    // Обновляем массив сотрудников, удаляя нужного сотрудника
+    const updatedStore = {
+      ...currentStore,
+      employees: currentStore.employees.filter((employee) => employee !== employeeId),
+    };
+
+    // Вызываем санку для обновления
+    if (ratingsLength !== 0) {
+      dispatch(
+        showNotification({
+          message: `Дані не видалено: у працівника є оцінки.`,
+          severity: 'error',
+        }),
+      );
+      return;
+    }
+    dispatch(updateStoreEmployees(updatedStore));
+    dispatch(
+      showNotification({
+        message: `Дані успішно видалено!`,
+        severity: 'success',
+      }),
+    );
+  };
   return (
     <Box sx={{ padding: 2 }}>
       <Typography variant="h4" component="h2" gutterBottom>
@@ -94,27 +137,36 @@ const StorePage = ({ getPath }: any) => {
         <AddNewRatingForm store={store} handleClose={handleClose} />
       </Modal>
 
-      {filteredEmployees.map((el) => {
+      {filteredEmployees?.map((el) => {
         const filteredRating = ratings.filter((r) => r.employeeId === el.id && r.store.id === id);
         const sortedRatings = sortRatings(filteredRating);
+
         return (
           <Paper key={el.id} elevation={3} sx={{ marginBottom: 2, padding: 2 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Link to={`/employees/${el.id}`} style={{ textDecoration: 'none' }}>
-                {statusEmployeesData === 'pending' && <TitleSkeleton />}
-                <Typography
-                  sx={{
-                    cursor: 'pointer', // Указывает, что элемент кликабельный
-                    transition: 'color 0.3s, text-decoration 0.3s, transform 0.3s', // Добавляем анимацию увеличения
-                    '&:hover': {
-                      color: 'primary.main', // Меняем цвет текста при наведении
-                      transform: 'scale(1.05)', // Увеличиваем текст на 5%
-                    },
-                  }}
-                  variant="h6">
-                  {el.name}
-                </Typography>
-              </Link>
+              {statusEmployeesData === 'pending' && <TitleSkeleton />}
+              <Typography
+                sx={{
+                  cursor: 'pointer', // Указывает, что элемент кликабельный
+                  transition: 'color 0.3s, text-decoration 0.3s, transform 0.3s', // Добавляем анимацию увеличения
+                  '&:hover': {
+                    color: 'primary.main', // Меняем цвет текста при наведении
+                    transform: 'scale(1.05)', // Увеличиваем текст на 5%
+                  },
+                }}
+                variant="h6">
+                <Link to={`/employees/${el.id}`} style={{ textDecoration: 'none' }}>
+                  {el.name}{' '}
+                </Link>
+
+                <IconButton
+                  onClick={() => {
+                    removeEmployee({ storeId: store.id, employeeId: el.id });
+                  }}>
+                  <DeleteIcon sx={{ opacity: 0.9, fill: 'gray' }} />
+                </IconButton>
+              </Typography>
+
               <SortBy
                 value={filter}
                 onChange={setFilter}

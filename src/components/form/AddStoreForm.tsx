@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { TextField, Button, Box, Autocomplete } from '@mui/material';
 import { createStore } from '../../features/stores/storesSlice';
-import { fetchEmployee } from '../../features/employees/employeesSlice';
 import { useAppDispatch } from '../../hook/useAppDispatch';
 import { useAppSelector } from '../../hook/useAppSelector';
 import { employeesSelector } from '../../features/employees/employeesSelector';
+import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
 
 type AddStoreForm = {
   handleClose: (value: boolean) => void;
 };
 const AddStoreForm = ({ handleClose }: AddStoreForm) => {
-  const employees = useAppSelector(employeesSelector);
+  const { data: employees } = useGetEmployeesQuery();
   const dispatch = useAppDispatch();
   const [storeData, setStoreData] = useState({
     id: '',
@@ -18,9 +18,7 @@ const AddStoreForm = ({ handleClose }: AddStoreForm) => {
     location: '',
     employees: [],
   });
-  useEffect(() => {
-    dispatch(fetchEmployee());
-  }, [dispatch]);
+
   const changeStoreData = (params: string) => {
     return (e: any) => {
       setStoreData({
@@ -61,7 +59,7 @@ const AddStoreForm = ({ handleClose }: AddStoreForm) => {
       />
       <Autocomplete
         multiple
-        options={employees}
+        options={employees ? employees : []}
         getOptionLabel={(option) => option.name}
         onChange={handleEmployeesChange}
         renderInput={(params) => (

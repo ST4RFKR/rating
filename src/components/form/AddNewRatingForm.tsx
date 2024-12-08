@@ -2,18 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { TextField, Button, Box, Autocomplete } from '@mui/material';
 import { createRating } from '../../features/rating/ratingSlice';
 import { v1 } from 'uuid';
-import { fetchEmployee } from '../../features/employees/employeesSlice';
 import { updateStoreEmployees } from '../../features/stores/storesSlice';
 import { useAppDispatch } from '../../hook/useAppDispatch';
 import { useAppSelector } from '../../hook/useAppSelector';
 import { employeesSelector } from '../../features/employees/employeesSelector';
+import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
 
 const AddNewRatingForm = ({ store, handleClose }: any) => {
   const dispatch = useAppDispatch();
-  const employees = useAppSelector(employeesSelector);
-  useEffect(() => {
-    dispatch(fetchEmployee());
-  }, [dispatch]);
+  const { data: employees } = useGetEmployeesQuery();
   const [ratingData, setRatingData] = useState({
     id: v1(),
     date: '',
@@ -24,10 +21,10 @@ const AddNewRatingForm = ({ store, handleClose }: any) => {
     employeeId: '',
   });
 
-  const currentStoreEmployees = employees.filter((emp) => emp.currentStoreId === store.id);
-  const currentEmpData = employees.filter((emp) => emp.id === ratingData.employeeId);
+  const currentStoreEmployees = employees?.filter((emp) => emp.currentStoreId === store.id) || [];
+  const currentEmpData = employees?.filter((emp) => emp.id === ratingData.employeeId) || [];
 
-  const otherEmployees = employees.filter((emp) => emp.currentStoreId !== store.id);
+  const otherEmployees = employees?.filter((emp) => emp.currentStoreId !== store.id) || [];
 
   console.log(currentEmpData);
 

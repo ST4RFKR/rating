@@ -57,7 +57,12 @@ export const updateStoreEmployees = createAsyncThunk(
     }
   },
 );
-
+// export const deleteEmployeeByStore = createAsyncThunk(
+//   'stores/deleteEmployeeByStore',
+//   async (storeId : string, { dispatch, rejectWithValue }) => {
+//     await setDoc(doc(db, 'stores', storeId))
+//   }
+// )
 // export const fetchStores = createAsyncThunk(
 //   'employee/fetchStores',
 //   async (_, { rejectWithValue }) => {

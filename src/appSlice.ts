@@ -13,7 +13,7 @@ export const appSlice = createSlice({
   initialState: {
     themeMode: 'light' as ThemeMode,
     error: null as string | null,
-    status: 'idle' as RequestStatus,
+    status: 'loading' as RequestStatus,
     notification: {
       message: '',
       open: false,

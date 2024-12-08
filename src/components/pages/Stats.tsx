@@ -23,11 +23,13 @@ import {
 import html2canvas from 'html2canvas';
 import { useAppDispatch } from '../../hook/useAppDispatch';
 import { fetchRatings } from '../../features/rating/ratingSlice';
-import { fetchEmployee } from '../../features/employees/employeesSlice';
 import DynamicText from '../DynamicText';
+import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
 
 const Stats = () => {
-  const employees = useAppSelector(employeesSelector);
+  // const employees = useAppSelector(employeesSelector);
+  const { data: employees } = useGetEmployeesQuery();
+
   const ratings = useAppSelector(ratingSelector);
   const dispatch = useAppDispatch();
   const [filterMonth, setFilterMonth] = useState('');
@@ -39,7 +41,7 @@ const Stats = () => {
   ];
 
   useEffect(() => {
-    dispatch(fetchEmployee());
+    // dispatch(fetchEmployee());
     dispatch(fetchRatings());
   }, [dispatch]);
   useEffect(() => {
@@ -51,8 +53,7 @@ const Stats = () => {
   const tableRef = useRef<HTMLDivElement>(null);
 
   // Фильтрация сотрудников по месяцам и расчет статистики
-  let employeeStats = employees.map((el) => {
-    const employeeId = el.id;
+  let employeeStats = employees?.map((el) => {
     const filteredRating = ratings.filter(
       (r) => r.employeeId === el.id && r.date.slice(0, 7) === filterMonth,
     );
@@ -72,7 +73,7 @@ const Stats = () => {
 
   // Сортировка по эффективности, если включен фильтр
   if (filterEfficiency) {
-    employeeStats = employeeStats.sort((a, b) => b.efficiency - a.efficiency);
+    employeeStats = employeeStats?.sort((a, b) => b.efficiency - a.efficiency);
   }
 
   const makeScreenshot = async () => {
@@ -148,7 +149,7 @@ const Stats = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {employeeStats.map((row, index) => {
+            {employeeStats?.map((row, index) => {
               // Вычисляем стиль для эффективности
               let cellStyle = {};
               if (filterEfficiency) {

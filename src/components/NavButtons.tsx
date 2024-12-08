@@ -3,15 +3,14 @@ import { NavLink } from 'react-router-dom';
 import { Box, useTheme } from '@mui/system';
 
 const navLinks = [
-  { to: '/main', label: 'Магазини' },
-  { to: '/employees', label: 'Працівники' },
-  { to: '/stats', label: 'Статистика' },
+  { to: '/main', label: 'Магазини', logo: '🏬' },
+  { to: '/employees', label: 'Працівники', logo: '😸' },
+  { to: '/stats', label: 'Статистика', logo: '💫' },
 ];
 
 const NavButtons = ({ handleLogout }: { handleLogout: () => void }) => {
   const theme = useTheme(); // Отримуємо поточну тему
   const linkColor = theme.palette.mode === 'dark' ? '#bdbdbd' : '#ffffff'; // Колір для неактивної лінки
-  const activeLinkColor = theme.palette.mode === 'dark' ? '#1976d2' : '#1976d2'; // Колір для активної лінки
 
   return (
     <Box sx={{ display: 'flex', gap: 2 }}>

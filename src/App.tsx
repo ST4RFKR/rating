@@ -19,6 +19,7 @@ import { getTheme } from './theme';
 import { useAppDispatch } from './hook/useAppDispatch';
 import { useAppSelector } from './hook/useAppSelector';
 import EmployeesPage from './components/pages/EmployeesPage';
+import Page404 from './components/pages/Page404';
 
 function App() {
   const themeMode = useSelector<RootState, ThemeMode>((state) => state.app.themeMode);
@@ -107,7 +108,7 @@ function App() {
               <Route path="/employees" element={<EmployeesPage />} />
               <Route path="/employees/:id" element={<EmployeePage path={path} />} />
               <Route path="/stats" element={<Stats />} />
-              <Route path="*" element={<div>Error</div>} />
+              <Route path="*" element={<Page404 />} />
             </Routes>
           </Box>
           <Snackbar

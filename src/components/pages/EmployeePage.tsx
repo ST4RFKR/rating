@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { AppDispatch, RootState } from '../../redux/store';
-import { Typography, Box, Button } from '@mui/material';
+import { Typography, Box, Button, LinearProgress } from '@mui/material';
 import RatingDetail from '../RatingDetail'; // Используем тот же компонент
-import { fetchEmployee } from '../../features/employees/employeesSlice';
 import { fetchRatings } from '../../features/rating/ratingSlice';
 import EmployeInfo from '../EmployeeInfo';
 
@@ -15,22 +14,22 @@ import { useAppDispatch } from '../../hook/useAppDispatch';
 import { useAppSelector } from '../../hook/useAppSelector';
 import { employeesSelector } from '../../features/employees/employeesSelector';
 import { ratingSelector } from '../../features/rating/ratingSelector';
+import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
 
 const EmployeePage = ({ path }: any) => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(fetchEmployee());
     dispatch(fetchRatings());
   }, [dispatch]);
 
-  const employees = useAppSelector(employeesSelector);
+  const { data: employees, isLoading: isLoadingEmployees } = useGetEmployeesQuery();
   const statusRatingData = useAppSelector((state: RootState) => state.ratings.status);
   const statusEmployeeData = useAppSelector((state: RootState) => state.employees.status);
   const ratings = useAppSelector(ratingSelector);
 
-  const employee = employees.find((el) => el.id === id);
+  const employee = employees?.find((el) => el.id === id);
   const employeeRatings = ratings.filter((rating) => rating.employeeId === id);
 
   const [filter, setFilter] = React.useState({ sort: '', query: '', currentMonth: false });

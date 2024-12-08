@@ -13,18 +13,20 @@ import {
   Button,
 } from '@mui/material';
 import { fetchStores, storesSelector } from '../../features/stores/storesSlice';
-import { fetchEmployee } from '../../features/employees/employeesSlice';
 import { useAppDispatch } from '../../hook/useAppDispatch';
+import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
+import Modal from '../Modal';
+import AddEmployeeForm from '../form/AddEmployeeForm';
 
 const EmployeesPage = () => {
+  const [open, setOpen] = React.useState(false);
   const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(fetchEmployee());
     dispatch(fetchStores());
   }, [dispatch]);
-  const employees = useAppSelector(employeesSelector);
-  const stores = useAppSelector(storesSelector);
 
+  const stores = useAppSelector(storesSelector);
+  const { data: employees } = useGetEmployeesQuery();
   const getStoreName = (storeId: string) => {
     const store = stores.find((s) => s.id === storeId);
     return store ? store.name : 'Позаштатний працівник';
@@ -44,9 +46,18 @@ const EmployeesPage = () => {
         Список працівників
       </Typography>
       <Box>
-        <Button variant="contained" color="secondary">
+        <Button onClick={() => setOpen(true)} variant="contained" color="secondary">
           Створити нового працівника
         </Button>
+        <Modal
+          open={open}
+          handleClose={() => {
+            setOpen(false);
+          }}
+          decription={'Создать нового сотрудника'}>
+          {' '}
+          <AddEmployeeForm handleClose={setOpen} />
+        </Modal>
       </Box>
 
       <List>

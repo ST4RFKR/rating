@@ -2,21 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { TextField, Button, Box, Autocomplete } from '@mui/material';
 import { createRating } from '../../features/rating/ratingSlice';
 import { v1 } from 'uuid';
-import { fetchEmployee } from '../../features/employees/employeesSlice';
 import { updateStoreEmployees } from '../../features/stores/storesSlice';
 import { useAppSelector } from '../../hook/useAppSelector';
 import { employeesSelector } from '../../features/employees/employeesSelector';
 import { useAppDispatch } from '../../hook/useAppDispatch';
+import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
 
 const AddNewRatingForm = ({ store, handleClose }: any) => {
-  const employees = useAppSelector(employeesSelector);
+  const { data: employees } = useGetEmployeesQuery();
   const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(fetchEmployee());
-  }, [dispatch]);
+  useEffect(() => {}, [dispatch]);
 
-  const currentStoreEmployees = employees.filter((emp) => emp.currentStoreId === store.id);
-  const otherEmployees = employees.filter((emp) => emp.currentStoreId !== store.id);
+  const currentStoreEmployees = employees?.filter((emp) => emp.currentStoreId === store.id) || [];
+  const otherEmployees = employees?.filter((emp) => emp.currentStoreId !== store.id) || [];
 
   const [ratingData, setRatingData] = useState({
     id: v1(),
