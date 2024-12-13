@@ -1,7 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useAppSelector } from '../../hook/useAppSelector';
-import { employeesSelector } from '../../features/employees/employeesSelector';
-import { ratingSelector } from '../../features/rating/ratingSelector';
 import {
   Table,
   TableBody,
@@ -22,15 +19,14 @@ import {
 } from '@mui/material';
 import html2canvas from 'html2canvas';
 import { useAppDispatch } from '../../hook/useAppDispatch';
-import { fetchRatings } from '../../features/rating/ratingSlice';
 import DynamicText from '../DynamicText';
 import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
+import { useGetRatingsQuery } from '../../features/rating/ratingApi';
 
 const Stats = () => {
-  // const employees = useAppSelector(employeesSelector);
   const { data: employees } = useGetEmployeesQuery();
+  const { data: ratings } = useGetRatingsQuery();
 
-  const ratings = useAppSelector(ratingSelector);
   const dispatch = useAppDispatch();
   const [filterMonth, setFilterMonth] = useState('');
   const [filterEfficiency, setFilterEfficiency] = useState(false); // Состояние чекбокса для фильтрации эффективности
@@ -41,10 +37,6 @@ const Stats = () => {
   ];
 
   useEffect(() => {
-    // dispatch(fetchEmployee());
-    dispatch(fetchRatings());
-  }, [dispatch]);
-  useEffect(() => {
     if (localStorage.getItem('filterEfficiency')) {
       setFilterEfficiency(localStorage.getItem('filterEfficiency') === 'true');
     }
@@ -54,13 +46,13 @@ const Stats = () => {
 
   // Фильтрация сотрудников по месяцам и расчет статистики
   let employeeStats = employees?.map((el) => {
-    const filteredRating = ratings.filter(
+    const filteredRating = ratings?.filter(
       (r) => r.employeeId === el.id && r.date.slice(0, 7) === filterMonth,
     );
-    const totalCount = filteredRating.reduce((acc, el) => acc + Number(el.score), 0);
-    const totalShifts = filteredRating.length;
-    const maxScore = totalShifts * 2;
-    const efficiency = totalShifts > 0 ? (totalCount / maxScore) * 100 : 0; // Рассчитываем эффективность
+    const totalCount = filteredRating?.reduce((acc, el) => acc + Number(el.score), 0);
+    const totalShifts = filteredRating?.length;
+    const maxScore = totalShifts || 0 * 2;
+    const efficiency = totalShifts || 0 > 0 ? (totalCount / maxScore) * 100 : 0; // Рассчитываем эффективность
 
     return {
       name: el.name,

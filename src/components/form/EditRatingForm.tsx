@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
-import { AppDispatch, RootState } from '../../redux/store';
+import { AppDispatch } from '../../redux/store';
 import { useDispatch } from 'react-redux';
-import { chengeRating } from '../../features/rating/ratingSlice';
-import { useAppSelector } from '../../hook/useAppSelector';
+
+import { useGetRatingsQuery, useUpdateRatingMutation } from '../../features/rating/ratingApi';
+import { showNotification } from '../../appSlice';
 
 const EditRatingForm = ({ handleClose, ratingId }: any) => {
-  const dispath = useDispatch<AppDispatch>();
-  const ratings = useAppSelector((state: RootState) => state.ratings.ratings);
-  const currentData = ratings.find((el) => el.id === ratingId);
+  const [updateRating] = useUpdateRatingMutation();
+  const { data: ratings } = useGetRatingsQuery();
+
+  const dispatch = useDispatch<AppDispatch>();
+  const currentData = ratings?.find((el) => el.id === ratingId);
   const [ratingData, setRatingData] = useState({
     date: currentData?.date,
     time: currentData?.time,
@@ -70,14 +73,19 @@ const EditRatingForm = ({ handleClose, ratingId }: any) => {
           variant="contained"
           color="primary"
           onClick={() => {
-            dispath(
-              chengeRating({
-                ratingId: ratingId,
-                newData: {
-                  ...ratingData,
-                },
-              }),
-            );
+            // dispath(
+            //   chengeRating({
+            //     ratingId: ratingId,
+            //     newData: {
+            //       ...ratingData,
+            //     },
+            //   }),
+            // );
+            updateRating({ id: ratingId, updatedData: ratingData }).then(() => {
+              dispatch(
+                showNotification({ message: 'Дані успішно оновлено!', severity: 'success' }),
+              );
+            });
             handleClose();
           }}>
           Сохранить

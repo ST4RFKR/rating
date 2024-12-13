@@ -1,16 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import storesReducer from '../features/stores/storesSlice';
-import employeesReducer from '../features/employees/employeesSlice';
-import ratingsReducer from '../features/rating/ratingSlice';
+
 import { appReducer } from '../appSlice';
 import { baseApi } from '../features/employees/baseApi';
 import { setupListeners } from '@reduxjs/toolkit/query/react';
 
 export const store = configureStore({
   reducer: {
-    stores: storesReducer,
-    employees: employeesReducer,
-    ratings: ratingsReducer,
     app: appReducer,
     [baseApi.reducerPath]: baseApi.reducer,
   },

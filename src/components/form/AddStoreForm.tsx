@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { TextField, Button, Box, Autocomplete } from '@mui/material';
-import { createStore } from '../../features/stores/storesSlice';
 import { useAppDispatch } from '../../hook/useAppDispatch';
-import { useAppSelector } from '../../hook/useAppSelector';
-import { employeesSelector } from '../../features/employees/employeesSelector';
+
 import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
+import { useAddStoreMutation } from '../../features/stores/storesApi';
 
 type AddStoreForm = {
   handleClose: (value: boolean) => void;
@@ -12,6 +11,7 @@ type AddStoreForm = {
 const AddStoreForm = ({ handleClose }: AddStoreForm) => {
   const { data: employees } = useGetEmployeesQuery();
   const dispatch = useAppDispatch();
+  const [addStore] = useAddStoreMutation();
   const [storeData, setStoreData] = useState({
     id: '',
     name: '',
@@ -34,7 +34,7 @@ const AddStoreForm = ({ handleClose }: AddStoreForm) => {
     });
   };
   const AddNewStore = () => {
-    dispatch(createStore({ ...storeData }));
+    addStore(storeData);
     handleClose(false);
   };
   return (

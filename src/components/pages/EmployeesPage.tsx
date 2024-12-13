@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../hook/useAppSelector';
-import { employeesSelector } from '../../features/employees/employeesSelector';
 import {
   List,
   ListItem,
@@ -12,23 +11,20 @@ import {
   ListItemButton,
   Button,
 } from '@mui/material';
-import { fetchStores, storesSelector } from '../../features/stores/storesSlice';
 import { useAppDispatch } from '../../hook/useAppDispatch';
 import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
 import Modal from '../Modal';
 import AddEmployeeForm from '../form/AddEmployeeForm';
+import { useGetStoresQuery } from '../../features/stores/storesApi';
 
 const EmployeesPage = () => {
   const [open, setOpen] = React.useState(false);
   const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(fetchStores());
-  }, [dispatch]);
 
-  const stores = useAppSelector(storesSelector);
+  const { data: stores } = useGetStoresQuery();
   const { data: employees } = useGetEmployeesQuery();
   const getStoreName = (storeId: string) => {
-    const store = stores.find((s) => s.id === storeId);
+    const store = stores?.find((s) => s.id === storeId);
     return store ? store.name : 'Позаштатний працівник';
   };
 

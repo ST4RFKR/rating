@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { fetchStores, storesType } from '../features/stores/storesSlice';
 import { AppDispatch, RootState } from '../redux/store';
 import { Button, IconButton, Tooltip } from '@mui/material';
 import { Link } from 'react-router-dom';
@@ -8,21 +7,21 @@ import Modal from '../components/Modal';
 import { useDispatch } from 'react-redux';
 import AddStoreForm from '../components/form/AddStoreForm';
 import { useAppSelector } from '../hook/useAppSelector';
+import { useGetStoresQuery } from '../features/stores/storesApi';
 
 const Main = ({ roleCurrentUser, getUsers }: any) => {
   const dispatch = useDispatch<AppDispatch>();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const stores = useAppSelector((state: RootState) => state.stores.stores);
+  const { data: stores } = useGetStoresQuery();
   useEffect(() => {
-    dispatch(fetchStores());
     getUsers();
   }, [dispatch]);
 
   return (
     <div>
-      {stores.map((el: storesType) => (
+      {stores?.map((el: any) => (
         <Link to={`/store/${el.id}`} key={el.id} style={{ textDecoration: 'none' }}>
           <Button sx={{ ml: '10px' }} variant="outlined">
             {el.name}

@@ -1,22 +1,15 @@
 // services/todoApi.js
+import { fetchFromFirestore } from '../../components/utils/fethFromFireStore';
 import { db } from '../../firebase/firebaseConfig';
 import { baseApi, firestoreDb } from './baseApi';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
-
-const fetchEmployeesFromFirestore = async () => {
-  const querySnapshot = await getDocs(collection(db, 'employees'));
-  return querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
-};
+import { updateDoc, deleteDoc, doc, setDoc } from 'firebase/firestore';
 
 export const employeesApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getEmployees: builder.query<any[], void>({
       queryFn: async () => {
         try {
-          const data = await fetchEmployeesFromFirestore();
+          const data = await fetchFromFirestore('employees');
           return { data };
         } catch (error) {
           return { error: { status: 'FETCH_ERROR', error } };
@@ -27,25 +20,25 @@ export const employeesApi = baseApi.injectEndpoints({
     addEmployees: builder.mutation<any, any>({
       async queryFn(newEmployee) {
         try {
-          await addDoc(collection(db, 'employees'), newEmployee);
+          await setDoc(doc(db, 'employees', newEmployee.id), newEmployee);
           return { data: { newEmployee } };
         } catch (error: any) {
           return { error: error.message };
         }
       },
-      invalidatesTags: ['Employees'],
+      invalidatesTags: ['Employees', 'Stores', 'Ratings'],
     }),
     updateEmployees: builder.mutation({
       async queryFn({ id, ...updatedData }) {
         try {
-          const docRef = doc(db, 'todos', id);
+          const docRef = doc(db, 'employees', id);
           await updateDoc(docRef, updatedData);
           return { data: { ...updatedData } };
         } catch (error: any) {
           return { error: error.message };
         }
       },
-      invalidatesTags: ['Employees'],
+      invalidatesTags: ['Employees', 'Stores'],
     }),
     deleteEmployees: builder.mutation({
       async queryFn(id) {
@@ -57,7 +50,7 @@ export const employeesApi = baseApi.injectEndpoints({
           return { error: error.message };
         }
       },
-      invalidatesTags: ['Employees'],
+      invalidatesTags: ['Employees', 'Stores'],
     }),
   }),
 });

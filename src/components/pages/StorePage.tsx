@@ -14,36 +14,35 @@ import {
 import RatingDetail from '../RatingDetail';
 import Modal from '../Modal';
 import AddNewRatingForm from '../form/AddNewRatingForm';
-import { fetchStores, storesType, updateStoreEmployees } from '../../features/stores/storesSlice';
-import { fetchRatings, ratingType } from '../../features/rating/ratingSlice';
+
 import RatingDetailSkeleton from '../RatingDetailSkeleton';
 import TitleSkeleton from '../TitleSkeleton';
 import SortBy from '../UI/select/SortBy';
 
-import { useAppSelector } from '../../hook/useAppSelector';
 import { useAppDispatch } from '../../hook/useAppDispatch';
-import { employeesSelector } from '../../features/employees/employeesSelector';
-import { ratingSelector } from '../../features/rating/ratingSelector';
-import { hideNotification, notificationSelector, showNotification } from '../../appSlice';
+
+import { showNotification } from '../../appSlice';
 import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
-import { arrayRemove, doc, getFirestore, updateDoc } from 'firebase/firestore';
 import { Delete as DeleteIcon } from '@mui/icons-material';
+import {
+  useGetSingleStoreQuery,
+  useGetStoresQuery,
+  useUpdateStoreMutation,
+} from '../../features/stores/storesApi';
+import { useGetRatingsQuery } from '../../features/rating/ratingApi';
 
 const StorePage = ({ getPath }: any) => {
   const { id } = useParams<{ id: string }>();
+  const { data: store } = useGetSingleStoreQuery(id);
+  const { data: employees, isLoading: isLoadingEmployees } = useGetEmployeesQuery();
+  const { data: ratings, isLoading: isLoadingRatings } = useGetRatingsQuery();
+  const [updateStore] = useUpdateStoreMutation();
+
   const [open, setOpen] = React.useState(false);
   const { pathname } = useLocation();
   useEffect(() => {
     getPath(pathname);
   }, [pathname]);
-  // Ваш компонент или обработчик
-
-  const stores = useAppSelector((state: RootState) => state.stores.stores);
-  const { data: employees } = useGetEmployeesQuery();
-  const ratings = useAppSelector(ratingSelector);
-
-  const statusEmployeesData = useAppSelector((state) => state.employees.status);
-  const statusRatingData = useAppSelector((state) => state.ratings.status);
 
   const dispatch = useAppDispatch();
 
@@ -52,14 +51,8 @@ const StorePage = ({ getPath }: any) => {
     query: '',
   });
 
-  useEffect(() => {
-    dispatch(fetchRatings());
-    dispatch(fetchStores());
-  }, [dispatch]);
-
-  const store = stores.find((s: storesType) => s.id === id);
   const filteredEmployees = employees?.filter((el) => store?.employees.includes(el.id));
-  const sortRatings = (ratings: ratingType[]) => {
+  const sortRatings = (ratings: any) => {
     if (!filter.sort) return ratings;
 
     return [...ratings].sort((a, b) => {
@@ -84,22 +77,19 @@ const StorePage = ({ getPath }: any) => {
   }
   const removeEmployee = (payload: { storeId: string; employeeId: string }) => {
     const { storeId, employeeId } = payload;
-    const currentStore = stores.find((el) => el.id === storeId);
-    const ratingsLength = ratings.filter((el) => el.employeeId === employeeId).length;
-    // Проверяем, что магазин найден
-    if (!currentStore) {
-      console.error('Store not found!');
-      return;
-    }
+    const ratingsLength = ratings?.filter(
+      (el) => el.employeeId === employeeId && el.store.id === storeId,
+    ).length;
 
     // Обновляем массив сотрудников, удаляя нужного сотрудника
     const updatedStore = {
-      ...currentStore,
-      employees: currentStore.employees.filter((employee) => employee !== employeeId),
+      ...store,
+      employees: store.employees.filter((employee: any) => employee !== employeeId),
     };
 
     // Вызываем санку для обновления
     if (ratingsLength !== 0) {
+      console.log(ratingsLength);
       dispatch(
         showNotification({
           message: `Дані не видалено: у працівника є оцінки.`,
@@ -108,13 +98,14 @@ const StorePage = ({ getPath }: any) => {
       );
       return;
     }
-    dispatch(updateStoreEmployees(updatedStore));
-    dispatch(
-      showNotification({
-        message: `Дані успішно видалено!`,
-        severity: 'success',
-      }),
-    );
+    updateStore({ id: storeId, updatedData: updatedStore }).then(() => {
+      dispatch(
+        showNotification({
+          message: `Дані успішно видалено!`,
+          severity: 'success',
+        }),
+      );
+    });
   };
   return (
     <Box sx={{ padding: 2 }}>
@@ -138,13 +129,13 @@ const StorePage = ({ getPath }: any) => {
       </Modal>
 
       {filteredEmployees?.map((el) => {
-        const filteredRating = ratings.filter((r) => r.employeeId === el.id && r.store.id === id);
-        const sortedRatings = sortRatings(filteredRating);
+        const filteredRating = ratings?.filter((r) => r.employeeId === el.id && r.store.id === id);
+        const sortedRatings = sortRatings(filteredRating || []);
 
         return (
           <Paper key={el.id} elevation={3} sx={{ marginBottom: 2, padding: 2 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              {statusEmployeesData === 'pending' && <TitleSkeleton />}
+              {isLoadingEmployees && <TitleSkeleton />}
               <Typography
                 sx={{
                   cursor: 'pointer', // Указывает, что элемент кликабельный
@@ -179,11 +170,10 @@ const StorePage = ({ getPath }: any) => {
                 ]}
               />
             </Box>
-            {statusRatingData === 'pending' &&
-              [...Array(4)].map((_, idx) => <RatingDetailSkeleton key={idx} />)}
+            {isLoadingRatings && [...Array(4)].map((_, idx) => <RatingDetailSkeleton key={idx} />)}
 
             {sortedRatings.length ? (
-              sortedRatings.map((rating) => (
+              sortedRatings.map((rating: any) => (
                 <RatingDetail
                   key={rating.id}
                   date={rating.date}

@@ -2,11 +2,12 @@ import React from 'react';
 import { Box, Grid, Typography, Divider, IconButton, ListItem } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 
-import { deleteRating } from '../features/rating/ratingSlice';
 import Modal from './Modal';
 import EditRatingForm from './form/EditRatingForm';
 import { useAppDispatch } from '../hook/useAppDispatch';
-import { useAppSelector } from '../hook/useAppSelector';
+
+import { useDeleteRatingMutation } from '../features/rating/ratingApi';
+import { showNotification } from '../appSlice';
 
 type RatingDetailProps = {
   date: string;
@@ -31,16 +32,21 @@ const RatingDetail = ({
   ratingId,
 }: RatingDetailProps) => {
   const [open, setOpen] = React.useState(false);
-  const notification = useAppSelector((state) => state.app.notification);
 
   const dispatch = useAppDispatch();
+  const [deleteRating] = useDeleteRatingMutation();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    dispatch(deleteRating(ratingId));
+    deleteRating(ratingId).then(() => {
+      console.log(ratingId);
+
+      dispatch(showNotification({ message: 'Дані успішно видалено!', severity: 'success' }));
+    });
+    // dispatch(deleteRating(ratingId));
   };
 
   return (

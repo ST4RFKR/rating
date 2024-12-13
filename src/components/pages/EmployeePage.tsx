@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { AppDispatch, RootState } from '../../redux/store';
 import { Typography, Box, Button, LinearProgress } from '@mui/material';
 import RatingDetail from '../RatingDetail'; // Используем тот же компонент
-import { fetchRatings } from '../../features/rating/ratingSlice';
+
 import EmployeInfo from '../EmployeeInfo';
 
 import RatingFilter from '../RatingFilter';
@@ -11,30 +11,22 @@ import { useRating } from '../../hook/useRating';
 import RatingDetailSkeleton from '../RatingDetailSkeleton';
 import EmployeInfoSkeleton from '../EmployeInfoSkeleton';
 import { useAppDispatch } from '../../hook/useAppDispatch';
-import { useAppSelector } from '../../hook/useAppSelector';
-import { employeesSelector } from '../../features/employees/employeesSelector';
-import { ratingSelector } from '../../features/rating/ratingSelector';
+
 import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
+import { useGetRatingsQuery } from '../../features/rating/ratingApi';
 
 const EmployeePage = ({ path }: any) => {
   const { id } = useParams<{ id: string }>();
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    dispatch(fetchRatings());
-  }, [dispatch]);
 
   const { data: employees, isLoading: isLoadingEmployees } = useGetEmployeesQuery();
-  const statusRatingData = useAppSelector((state: RootState) => state.ratings.status);
-  const statusEmployeeData = useAppSelector((state: RootState) => state.employees.status);
-  const ratings = useAppSelector(ratingSelector);
+  const { data: ratings, isLoading: isLoadingRetings } = useGetRatingsQuery();
 
   const employee = employees?.find((el) => el.id === id);
-  const employeeRatings = ratings.filter((rating) => rating.employeeId === id);
+  const employeeRatings = ratings?.filter((rating) => rating.employeeId === id);
 
   const [filter, setFilter] = React.useState({ sort: '', query: '', currentMonth: false });
   const sortedAndSearchRatings = useRating(
-    employeeRatings,
+    employeeRatings || [],
     filter.sort,
     filter.query,
     filter.currentMonth,
@@ -56,14 +48,9 @@ const EmployeePage = ({ path }: any) => {
       </Box>
 
       <Box sx={{ marginBottom: 2 }}>
-        {statusEmployeeData === 'pending' ? (
-          <EmployeInfoSkeleton />
-        ) : (
-          <EmployeInfo employee={employee} />
-        )}
+        {isLoadingEmployees ? <EmployeInfoSkeleton /> : <EmployeInfo employee={employee} />}
       </Box>
-      {statusRatingData === 'pending' &&
-        [...Array(4)].map((_, idx) => <RatingDetailSkeleton key={idx} />)}
+      {isLoadingRetings && [...Array(4)].map((_, idx) => <RatingDetailSkeleton key={idx} />)}
       {/* Список оценок сотрудника */}
       {sortedAndSearchRatings.length ? (
         sortedAndSearchRatings.map((rating) => (

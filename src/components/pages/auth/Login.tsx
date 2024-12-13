@@ -1,19 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../../firebase/firebaseConfig';
-import { Button, TextField, Box, Typography, Paper } from '@mui/material';
+import { Button, TextField, Box, Typography } from '@mui/material';
+import { useAppDispatch } from '../../../hook/useAppDispatch';
+import { setIsInitialized, showNotification } from '../../../appSlice';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const dispatch = useAppDispatch();
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      dispatch(setIsInitialized({ isInitialized: false })); // Сбрасываем состояние
       await signInWithEmailAndPassword(auth, email, password);
+      // await getUsers(); // Обновление данных пользователя
+      dispatch(showNotification({ message: 'Авторизация успешна!', severity: 'success' }));
     } catch (error: any) {
+      dispatch(showNotification({ message: error.message, severity: 'error' }));
       console.error(error);
-      alert(error.message);
+    } finally {
+      dispatch(setIsInitialized({ isInitialized: true })); // Гарантированное восстановление состояния
     }
   };
 

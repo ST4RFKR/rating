@@ -1,9 +1,8 @@
 import { Box, Paper, Typography } from '@mui/material';
-import { employeeType } from '../features/employees/employeesSlice';
 import DynamicText from './DynamicText';
 
 type EmployeInfoPropsType = {
-  employee: employeeType;
+  employee: any;
 };
 const EmployeInfo = ({ employee }: EmployeInfoPropsType) => {
   return (

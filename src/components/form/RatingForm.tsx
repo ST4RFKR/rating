@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { TextField, Button, Box, Autocomplete } from '@mui/material';
-import { createRating } from '../../features/rating/ratingSlice';
+
 import { v1 } from 'uuid';
-import { updateStoreEmployees } from '../../features/stores/storesSlice';
-import { useAppSelector } from '../../hook/useAppSelector';
-import { employeesSelector } from '../../features/employees/employeesSelector';
+
 import { useAppDispatch } from '../../hook/useAppDispatch';
 import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
+import { useUpdateStoreMutation } from '../../features/stores/storesApi';
+import { useAddRatingMutation } from '../../features/rating/ratingApi';
 
 const AddNewRatingForm = ({ store, handleClose }: any) => {
   const { data: employees } = useGetEmployeesQuery();
+  const [updateStore] = useUpdateStoreMutation();
+  const [addReting] = useAddRatingMutation();
   const dispatch = useAppDispatch();
   useEffect(() => {}, [dispatch]);
 
@@ -44,9 +46,9 @@ const AddNewRatingForm = ({ store, handleClose }: any) => {
         ...store,
         employees: [...store.employees, ratingData.employeeId],
       };
-      await dispatch(updateStoreEmployees(updatedStore));
+      await updateStore({ id: updatedStore.id, updatedData: updatedStore });
     }
-    dispatch(createRating({ ...ratingData, store: { id: store.id, name: store.name } }));
+    addReting({ ...ratingData, store: { id: store.id, name: store.name } });
     setRatingData({
       id: v1(),
       date: '',

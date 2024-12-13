@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, isFulfilled, isPending, isRejected } from '@reduxjs/toolkit';
 
 export type ThemeMode = 'dark' | 'light';
 export type RequestStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
@@ -13,7 +13,8 @@ export const appSlice = createSlice({
   initialState: {
     themeMode: 'light' as ThemeMode,
     error: null as string | null,
-    status: 'loading' as RequestStatus,
+    status: 'idle' as RequestStatus,
+    isInitialized: true,
     notification: {
       message: '',
       open: false,
@@ -24,9 +25,7 @@ export const appSlice = createSlice({
     changeTheme: (state, action) => {
       state.themeMode = action.payload.themeMode;
     },
-    setAppStatus: (state, action) => {
-      state.status = action.payload.status;
-    },
+
     setAppError: (state, action) => {
       state.error = action.payload.error;
     },
@@ -43,12 +42,28 @@ export const appSlice = createSlice({
       state.notification.open = false;
       state.notification.message = '';
     },
+    setIsInitialized: (state, action) => {
+      state.isInitialized = action.payload.isInitialized;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addMatcher(isPending, (state) => {
+        state.status = 'loading';
+      })
+      .addMatcher(isFulfilled, (state) => {
+        state.status = 'succeeded';
+      })
+      .addMatcher(isRejected, (state) => {
+        state.status = 'failed';
+      });
   },
   selectors: {
     notificationSelector: (state) => state.notification,
+    isInitializedSelector: (state) => state.isInitialized,
   },
 });
-export const { notificationSelector } = appSlice.selectors;
-export const { changeTheme, setAppError, setAppStatus, showNotification, hideNotification } =
+export const { notificationSelector, isInitializedSelector } = appSlice.selectors;
+export const { changeTheme, setAppError, showNotification, hideNotification, setIsInitialized } =
   appSlice.actions;
 export const appReducer = appSlice.reducer;

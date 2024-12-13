@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { TextField, Button, Box, Autocomplete } from '@mui/material';
-import { createRating } from '../../features/rating/ratingSlice';
 import { v1 } from 'uuid';
-import { updateStoreEmployees } from '../../features/stores/storesSlice';
 import { useAppDispatch } from '../../hook/useAppDispatch';
-import { useAppSelector } from '../../hook/useAppSelector';
-import { employeesSelector } from '../../features/employees/employeesSelector';
+
 import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
+import { useAddRatingMutation } from '../../features/rating/ratingApi';
+import { showNotification } from '../../appSlice';
+import { useUpdateStoreMutation } from '../../features/stores/storesApi';
 
 const AddNewRatingForm = ({ store, handleClose }: any) => {
   const dispatch = useAppDispatch();
+  const [addNewRating] = useAddRatingMutation();
+  const [updateStore] = useUpdateStoreMutation();
   const { data: employees } = useGetEmployeesQuery();
   const [ratingData, setRatingData] = useState({
     id: v1(),
@@ -45,9 +47,11 @@ const AddNewRatingForm = ({ store, handleClose }: any) => {
         ...store,
         employees: [...store.employees, ratingData.employeeId],
       };
-      await dispatch(updateStoreEmployees(updatedStore));
+      updateStore({ id: store.id, updatedData: updatedStore });
     }
-    dispatch(createRating({ ...ratingData, store: { id: store.id, name: store.name } }));
+    // dispatch(createRating({ ...ratingData, store: { id: store.id, name: store.name } }));
+    addNewRating({ ...ratingData, store: { id: store.id, name: store.name } }).then(() => {});
+    dispatch(showNotification({ message: 'Рейтинг успішно створено!', severity: 'success' }));
     setRatingData({
       id: v1(),
       date: '',

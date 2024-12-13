@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { HashRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
-import './App.css';
-import { Alert, Box, Button, CssBaseline, Snackbar, ThemeProvider } from '@mui/material';
+
+import {
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  CssBaseline,
+  Snackbar,
+  ThemeProvider,
+} from '@mui/material';
 import Main from './pages/Main';
 import StorePage from './components/pages/StorePage';
 import EmployeePage from './components/pages/EmployeePage';
@@ -14,16 +22,25 @@ import Stats from './components/pages/Stats';
 import { Header } from './components/Header';
 import { useSelector } from 'react-redux';
 import { RootState } from './redux/store';
-import { changeTheme, hideNotification, notificationSelector, ThemeMode } from './appSlice';
+import {
+  changeTheme,
+  hideNotification,
+  isInitializedSelector,
+  notificationSelector,
+  ThemeMode,
+} from './appSlice';
 import { getTheme } from './theme';
 import { useAppDispatch } from './hook/useAppDispatch';
-import { useAppSelector } from './hook/useAppSelector';
+
 import EmployeesPage from './components/pages/EmployeesPage';
 import Page404 from './components/pages/Page404';
+import styled from './App.module.css';
+import { useAppSelector } from './hook/useAppSelector';
 
 function App() {
   const themeMode = useSelector<RootState, ThemeMode>((state) => state.app.themeMode);
   const dispatch = useAppDispatch();
+  const isInitialized = useAppSelector(isInitializedSelector);
   const theme = getTheme(themeMode);
   const changeModeHandler = () => {
     dispatch(changeTheme({ themeMode: themeMode === 'light' ? 'dark' : 'light' }));
@@ -90,6 +107,14 @@ function App() {
   const handleCloseNotification = () => {
     dispatch(hideNotification());
   };
+
+  if (!isInitialized) {
+    return (
+      <div className={styled.circularProgressContainer}>
+        <CircularProgress size={150} thickness={3} />
+      </div>
+    );
+  }
 
   return (
     <div className="App">

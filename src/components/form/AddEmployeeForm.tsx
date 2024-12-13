@@ -3,7 +3,6 @@ import { TextField, Button, Box, Grid, LinearProgress } from '@mui/material';
 import { useAppDispatch } from '../../hook/useAppDispatch';
 import { useAddEmployeesMutation } from '../../features/employees/employeesApi';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { setAppStatus } from '../../appSlice';
 
 type AddEmployeeFormProps = {
   handleClose: (value: boolean) => void;
@@ -32,12 +31,10 @@ const AddEmployeeForm = ({ handleClose }: AddEmployeeFormProps) => {
     },
   });
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    dispatch(setAppStatus({ status: 'loading' }));
     try {
       await addNewEmployes(data).unwrap();
       handleClose(false);
     } finally {
-      dispatch(setAppStatus({ status: 'succeeded' }));
     }
   };
 

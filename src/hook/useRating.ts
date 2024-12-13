@@ -1,8 +1,6 @@
 import React from 'react';
-import { SortOption } from '../components/UI/select/SortBy';
-import { ratingType } from '../features/rating/ratingSlice';
 
-export const useSortedRatings = (ratings: ratingType[], sort: string) => {
+export const useSortedRatings = (ratings: any, sort: string) => {
   return React.useMemo(() => {
     let sorted = [...ratings];
 
@@ -20,12 +18,7 @@ export const useSortedRatings = (ratings: ratingType[], sort: string) => {
   }, [ratings, sort]);
 };
 
-export const useRating = (
-  ratings: ratingType[],
-  sort: string,
-  query: string,
-  isCurrentMonth: boolean,
-) => {
+export const useRating = (ratings: any, sort: string, query: string, isCurrentMonth: boolean) => {
   const currentMonth = new Date().getMonth() + 1;
   const currentYear = new Date().getFullYear();
 
@@ -36,7 +29,7 @@ export const useRating = (
 
     // Фильтрация по текущему месяцу
     if (isCurrentMonth) {
-      filteredRatings = filteredRatings.filter((rating: ratingType) => {
+      filteredRatings = filteredRatings.filter((rating: any) => {
         const [year, month] = rating.date.split('-').map(Number);
         return month === currentMonth && year === currentYear;
       });
@@ -44,7 +37,7 @@ export const useRating = (
 
     // Фильтрация по запросу
     if (query) {
-      filteredRatings = filteredRatings.filter((rating: ratingType) =>
+      filteredRatings = filteredRatings.filter((rating: any) =>
         rating.store.name.toLowerCase().includes(query.toLowerCase()),
       );
     }

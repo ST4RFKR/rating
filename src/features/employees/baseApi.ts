@@ -7,7 +7,7 @@ import { db } from '../../firebase/firebaseConfig';
 export const baseApi = createApi({
   reducerPath: 'baseApi',
   baseQuery: fakeBaseQuery(), // Можно заменить на fetchBaseQuery для REST API
-  tagTypes: ['Employees'], // Общие теги для кеширования
+  tagTypes: ['Employees', 'Stores', 'Ratings'], // Общие теги для кеширования
   endpoints: () => ({}), // Позже мы добавим конкретные API
 });
 
