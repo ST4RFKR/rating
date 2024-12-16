@@ -13,6 +13,9 @@ import {
   FormControlLabel,
   Checkbox,
   Select,
+  FormControl,
+  InputLabel,
+  MenuItem,
 } from '@mui/material';
 import html2canvas from 'html2canvas';
 import { useAppDispatch } from '../../hook/useAppDispatch';
@@ -21,15 +24,18 @@ import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
 import { useGetRatingsQuery } from '../../features/rating/ratingApi';
 import DateRangePicker from '../DateRangePicker';
 import { startOfDay, endOfDay, parseISO, isWithinInterval } from 'date-fns';
+import { useGetStoresQuery } from '../../features/stores/storesApi';
 
 const Stats = () => {
   const { data: employees } = useGetEmployeesQuery();
   const { data: ratings } = useGetRatingsQuery();
+  const { data: stores } = useGetStoresQuery();
 
   const dispatch = useAppDispatch();
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [filterEfficiency, setFilterEfficiency] = useState(true);
+  const [selectedStore, setSelectedStore] = useState<string>('all');
 
   useEffect(() => {
     if (localStorage.getItem('filterEfficiency')) {
@@ -39,7 +45,13 @@ const Stats = () => {
 
   const tableRef = useRef<HTMLDivElement>(null);
 
-  let employeeStats = employees?.map((el) => {
+  let filteredEmployees = employees || [];
+
+  if (selectedStore !== 'all') {
+    filteredEmployees = employees?.filter((el) => el.currentStoreId === selectedStore) || [];
+  }
+
+  let employeeStats = filteredEmployees?.map((el) => {
     const filteredRating = ratings?.filter((r) => {
       const ratingDate = parseISO(r.date);
       return (
@@ -98,6 +110,21 @@ const Stats = () => {
       </Box>
 
       <Box sx={{ mb: 2, display: 'flex', flexDirection: 'column' }}>
+        <FormControl sx={{ minWidth: 200 }}>
+          <InputLabel id="store-select-label">Магазин</InputLabel>
+          <Select
+            labelId="store-select-label"
+            value={selectedStore}
+            onChange={(e) => setSelectedStore(e.target.value)}
+            label="Магазин">
+            <MenuItem value="all">Всі магазини</MenuItem>
+            {stores?.map((store) => (
+              <MenuItem key={store.id} value={store.id}>
+                {store.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <FormControlLabel
           control={
             <Checkbox
@@ -119,7 +146,6 @@ const Stats = () => {
             onClick={makeScreenshot}>
             Зробити скріншот
           </Button>
-          <Select></Select>
         </Box>
       </Box>
 
