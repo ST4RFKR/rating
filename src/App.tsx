@@ -131,7 +131,7 @@ function App() {
               />
               <Route path="/store/:id" element={<StorePage getPath={getPath} />} />
               <Route path="/employees" element={<EmployeesPage />} />
-              <Route path="/employees/:id" element={<EmployeePage path={path} />} />
+              <Route path="/employees/:id" element={<EmployeePage />} />
               <Route path="/stats" element={<Stats />} />
               <Route path="*" element={<Page404 />} />
             </Routes>

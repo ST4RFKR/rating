@@ -16,8 +16,8 @@ import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
 import { useGetRatingsQuery } from '../../features/rating/ratingApi';
 
 const EmployeePage = ({ path }: any) => {
-  const { id } = useParams<{ id: string }>();
-
+  const { id } = useParams();
+  console.log(id);
   const { data: employees, isLoading: isLoadingEmployees } = useGetEmployeesQuery();
   const { data: ratings, isLoading: isLoadingRetings } = useGetRatingsQuery();
 

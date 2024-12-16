@@ -10,31 +10,26 @@ import {
   Typography,
   Box,
   Button,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-  Checkbox,
   FormControlLabel,
+  Checkbox,
+  Select,
 } from '@mui/material';
 import html2canvas from 'html2canvas';
 import { useAppDispatch } from '../../hook/useAppDispatch';
 import DynamicText from '../DynamicText';
 import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
 import { useGetRatingsQuery } from '../../features/rating/ratingApi';
+import DateRangePicker from '../DateRangePicker';
+import { startOfDay, endOfDay, parseISO, isWithinInterval } from 'date-fns';
 
 const Stats = () => {
   const { data: employees } = useGetEmployeesQuery();
   const { data: ratings } = useGetRatingsQuery();
 
   const dispatch = useAppDispatch();
-  const [filterMonth, setFilterMonth] = useState('');
-  const [filterEfficiency, setFilterEfficiency] = useState(false); // Состояние чекбокса для фильтрации эффективности
-  const options = [
-    { value: '2024-10', name: 'Жовтень' },
-    { value: '2024-11', name: 'Листопад' },
-    { value: '2024-12', name: 'Грудень' },
-  ];
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [filterEfficiency, setFilterEfficiency] = useState(true);
 
   useEffect(() => {
     if (localStorage.getItem('filterEfficiency')) {
@@ -44,26 +39,30 @@ const Stats = () => {
 
   const tableRef = useRef<HTMLDivElement>(null);
 
-  // Фильтрация сотрудников по месяцам и расчет статистики
   let employeeStats = employees?.map((el) => {
-    const filteredRating = ratings?.filter(
-      (r) => r.employeeId === el.id && r.date.slice(0, 7) === filterMonth,
-    );
-    const totalCount = filteredRating?.reduce((acc, el) => acc + Number(el.score), 0);
-    const totalShifts = filteredRating?.length;
-    const maxScore = totalShifts || 0 * 2;
-    const efficiency = totalShifts || 0 > 0 ? (totalCount / maxScore) * 100 : 0; // Рассчитываем эффективность
+    const filteredRating = ratings?.filter((r) => {
+      const ratingDate = parseISO(r.date);
+      return (
+        r.employeeId === el.id &&
+        (!startDate ||
+          !endDate ||
+          isWithinInterval(ratingDate, { start: startOfDay(startDate), end: endOfDay(endDate) }))
+      );
+    });
+    const totalCount = filteredRating?.reduce((acc, el) => acc + Number(el.score), 0) || 0;
+    const totalShifts = filteredRating?.length || 0;
+    const maxScore = totalShifts * 2;
+    const efficiency = totalShifts > 0 ? (totalCount / maxScore) * 100 : 0;
 
     return {
       name: el.name,
       totalCount,
       totalShifts,
       maxScore,
-      efficiency, // Добавляем эффективность
+      efficiency,
     };
   });
 
-  // Сортировка по эффективности, если включен фильтр
   if (filterEfficiency) {
     employeeStats = employeeStats?.sort((a, b) => b.efficiency - a.efficiency);
   }
@@ -78,42 +77,27 @@ const Stats = () => {
       link.click();
     }
   };
-  const title = `Статистика по працівникам за ${
-    filterMonth ? options.find((el) => el.value === filterMonth)?.name : options[0].name
-  } 2024`;
+
+  const title = `Статистика ${
+    startDate && endDate
+      ? `з ${startDate.toLocaleDateString()} по ${endDate.toLocaleDateString()}`
+      : 'за весь період'
+  }`;
+
   return (
     <Box sx={{ p: 2 }}>
-      <Typography variant="h4" gutterBottom>
-        Статистика по працівникам за{' '}
-        {filterMonth ? options.find((el) => el.value === filterMonth)?.name : options[0].name} 2024
-      </Typography>
       <DynamicText variant="h4" title={title} gutterBottom />
 
       <Box sx={{ mb: 2 }}>
-        <Button sx={{ mb: '10px' }} variant="contained" color="secondary" onClick={makeScreenshot}>
-          Зробити скріншот
-        </Button>
-        <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Вибрати місяць</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={filterMonth}
-            label="Вибрати місяць"
-            onChange={(e) => {
-              setFilterMonth(e.target.value);
-            }}>
-            {options.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <DateRangePicker
+          startDate={startDate}
+          endDate={endDate}
+          onStartDateChange={setStartDate}
+          onEndDateChange={setEndDate}
+        />
       </Box>
 
-      {/* Фильтрация по эффективности */}
-      <Box sx={{ mb: 2 }}>
+      <Box sx={{ mb: 2, display: 'flex', flexDirection: 'column' }}>
         <FormControlLabel
           control={
             <Checkbox
@@ -125,15 +109,25 @@ const Stats = () => {
               color="primary"
             />
           }
-          label="Cортировать по эффективности"
+          label="Сортировать по эффективности"
         />
+        <Box>
+          <Button
+            sx={{ mb: '10px', maxWidth: '200px' }}
+            variant="contained"
+            color="secondary"
+            onClick={makeScreenshot}>
+            Зробити скріншот
+          </Button>
+          <Select></Select>
+        </Box>
       </Box>
 
       <TableContainer component={Paper} ref={tableRef}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell align="left">Ім'я працівника</TableCell>
+              <TableCell align="left">{title}</TableCell>
               <TableCell align="center">Загальна к-сть балів</TableCell>
               <TableCell align="center">Загальна к-сть змін</TableCell>
               <TableCell align="center">Максимальна к-ть балів</TableCell>
@@ -142,13 +136,12 @@ const Stats = () => {
           </TableHead>
           <TableBody>
             {employeeStats?.map((row, index) => {
-              // Вычисляем стиль для эффективности
               let cellStyle = {};
               if (filterEfficiency) {
                 if (row.efficiency >= 50) {
-                  cellStyle = { backgroundColor: '#B8E0B9', color: 'black' }; // Светло-зеленый цвет, если эффективность >= 50
+                  cellStyle = { backgroundColor: '#B8E0B9', color: 'black' };
                 } else if (row.efficiency < 50) {
-                  cellStyle = { backgroundColor: '#fdced3', color: 'black' }; // Светло-красный цвет, если эффективность < 50
+                  cellStyle = { backgroundColor: '#fdced3', color: 'black' };
                 }
               }
 
@@ -165,7 +158,6 @@ const Stats = () => {
                     <Box sx={line} />
                     {row.totalShifts}
                   </TableCell>
-
                   <TableCell align="center" style={{ ...cellStyle, position: 'relative' }}>
                     <Box sx={line} />
                     {row.maxScore}
@@ -191,10 +183,10 @@ export default Stats;
 const line = {
   position: 'absolute',
   left: '0',
-  top: '25%', // Смещение сверху для размещения на 75% высоты
-  height: '50%', // Высота линии
-  width: '1px', // Толщина линии
-  backgroundColor: 'gray', // Цвет линии
-  transform: 'translateX(-50%)', // Центрирование линии
+  top: '25%',
+  height: '50%',
+  width: '1px',
+  backgroundColor: 'gray',
+  transform: 'translateX(-50%)',
   opacity: 0.5,
 };
