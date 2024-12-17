@@ -13,7 +13,7 @@ export const getTheme = (themeMode: ThemeMode) => {
     },
     typography: {
       h1: {
-        color: isDark ? '#FFFFFF' : '#000000',
+        color: isDark ? '#FFFFFF' : '#000',
       },
       h2: {
         color: isDark ? '#FFFFFF' : '#000000',
