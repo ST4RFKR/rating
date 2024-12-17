@@ -32,7 +32,8 @@ const AddEmployeeForm = ({ handleClose }: AddEmployeeFormProps) => {
   });
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
-      await addNewEmployes(data).unwrap();
+      const modifiedData = { ...data, id: data.id.toLowerCase() };
+      await addNewEmployes(modifiedData).unwrap();
       handleClose(false);
     } finally {
     }
