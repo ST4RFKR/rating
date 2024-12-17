@@ -66,7 +66,7 @@ const Main: React.FC<MainProps> = ({ getUsers }) => {
                     {el.name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    ID: {el.id}
+                    Населений пункт : {el.location}
                   </Typography>
                 </CardContent>
                 <CardActions>
