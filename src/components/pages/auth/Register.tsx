@@ -3,7 +3,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../../../firebase/firebaseConfig';
 
 import { Button, TextField, Box, Typography, Paper } from '@mui/material';
-import { addDoc, collection, Firestore } from 'firebase/firestore';
+import { addDoc, collection } from 'firebase/firestore';
 
 const Register = () => {
   const [email, setEmail] = useState('');

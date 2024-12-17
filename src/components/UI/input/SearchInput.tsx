@@ -12,8 +12,6 @@ type SearchInputProps = {
 };
 
 const SearchInput = ({ value, onChange, placeholder = 'Поиск...' }: SearchInputProps) => {
-  console.log(value);
-
   return (
     <TextField
       variant="outlined"

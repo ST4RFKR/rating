@@ -26,7 +26,7 @@ const AddNewRatingForm = ({ store, handleClose }: any) => {
       date: '',
       time: '',
       score: 0,
-      comment: '',
+      comment: 'Відео в Telegram!😀',
       videoUrl: '',
       employee: null,
     },

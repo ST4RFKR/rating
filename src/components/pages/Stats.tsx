@@ -19,29 +19,39 @@ import {
 } from '@mui/material';
 import html2canvas from 'html2canvas';
 import { useAppDispatch } from '../../hook/useAppDispatch';
-import DynamicText from '../DynamicText';
+
 import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
-import { useGetRatingsQuery } from '../../features/rating/ratingApi';
+import { useGetRatingsByDateQuery, useGetRatingsQuery } from '../../features/rating/ratingApi';
 import DateRangePicker from '../DateRangePicker';
 import { startOfDay, endOfDay, parseISO, isWithinInterval } from 'date-fns';
 import { useGetStoresQuery } from '../../features/stores/storesApi';
 
 const Stats = () => {
   const { data: employees } = useGetEmployeesQuery();
-  const { data: ratings } = useGetRatingsQuery();
-  const { data: stores } = useGetStoresQuery();
-  console.log(stores, ratings, employees);
 
-  const dispatch = useAppDispatch();
+  // const { data: ratings } = useGetRatingsQuery();
+  const { data: stores } = useGetStoresQuery();
+
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [filterEfficiency, setFilterEfficiency] = useState(true);
   const [selectedStore, setSelectedStore] = useState<string>('all');
+  const { data: ratings } = useGetRatingsByDateQuery({
+    startDate: startDate ? startDate.toISOString().slice(0, 10) : null,
+    endDate: endDate ? endDate.toISOString().slice(0, 10) : null,
+  });
 
   useEffect(() => {
     if (localStorage.getItem('filterEfficiency')) {
       setFilterEfficiency(localStorage.getItem('filterEfficiency') === 'true');
     }
+    const today = new Date();
+    const endDate = today;
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() - 7);
+
+    setStartDate(startDate);
+    setEndDate(endDate);
   }, []);
 
   const tableRef = useRef<HTMLDivElement>(null);
@@ -99,9 +109,9 @@ const Stats = () => {
 
   return (
     <Box sx={{ p: 2 }}>
-      <DynamicText variant="h4" title={title} gutterBottom />
+      <Typography variant="h4">{title}</Typography>
 
-      <Box sx={{ mb: 2 }}>
+      <Box sx={{ mb: 2, marginTop: '10px' }}>
         <DateRangePicker
           startDate={startDate}
           endDate={endDate}

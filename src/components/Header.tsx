@@ -17,7 +17,7 @@ export const Header = ({ handleLogout, changeModeHandler, user }: any) => {
         {user && <MobileMenu handleLogout={handleLogout} />}
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Box sx={{ fontSize: '24px', marginRight: '10px' }}>🏵️</Box>
-          <Typography variant="h5" sx={{ flexGrow: 1, textAlign: 'center' }}>
+          <Typography variant="h5" sx={{ flexGrow: 1, textAlign: 'center', color: '#fff' }}>
             Ефективність
           </Typography>
         </Box>

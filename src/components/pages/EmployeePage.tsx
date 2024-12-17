@@ -17,7 +17,6 @@ import { useState } from 'react';
 const EmployeePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  console.log(id);
   const { data: employees, isLoading: isLoadingEmployees } = useGetEmployeesQuery();
   const { data: ratings, isLoading: isLoadingRetings } = useGetRatingsQuery();
 

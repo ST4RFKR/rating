@@ -1,10 +1,42 @@
-import { deleteDoc, doc, setDoc, updateDoc } from 'firebase/firestore';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 import { fetchFromFirestore } from '../../components/utils/fethFromFireStore';
 import { baseApi } from '../employees/baseApi';
 import { db } from '../../firebase/firebaseConfig';
 
 export const ratingsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    getRatingsByDate: builder.query<any[], { startDate: string | null; endDate: string | null }>({
+      queryFn: async ({ startDate, endDate }) => {
+        try {
+          let ratingsQuery: any = collection(db, 'ratings');
+
+          if (startDate && endDate) {
+            ratingsQuery = query(
+              ratingsQuery,
+              where('date', '>=', startDate),
+              where('date', '<=', endDate),
+            );
+          }
+
+          const snapshot = await getDocs(ratingsQuery);
+          const data = snapshot.docs.map((doc) => doc.data());
+
+          return { data };
+        } catch (error) {
+          return { error: { status: 'FETCH_ERROR', error } };
+        }
+      },
+      providesTags: ['Ratings'],
+    }),
     getRatings: builder.query<any[], void>({
       queryFn: async () => {
         try {
@@ -59,4 +91,5 @@ export const {
   useAddRatingMutation,
   useUpdateRatingMutation,
   useDeleteRatingMutation,
+  useGetRatingsByDateQuery,
 } = ratingsApi;

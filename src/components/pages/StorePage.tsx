@@ -26,7 +26,7 @@ const StorePage = ({ getPath }: { getPath: (path: string) => void }) => {
   const dispatch = useAppDispatch();
 
   const [filter, setFilter] = useState<{ sort: SortOption; query: string }>({
-    sort: 'date-desc',
+    sort: 'date-asc',
     query: '',
   });
 
@@ -95,7 +95,7 @@ const StorePage = ({ getPath }: { getPath: (path: string) => void }) => {
         Співробітники магазину {store.name}
       </Typography>
 
-      <Can I="update" a="Article" ability={ability}>
+      <Can I="create" a="Article" ability={ability}>
         <Button variant="outlined" onClick={handleOpen}>
           Оцінити працівника
         </Button>

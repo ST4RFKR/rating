@@ -16,7 +16,7 @@ const Login = () => {
       dispatch(setIsInitialized({ isInitialized: false })); // Сбрасываем состояние
       await signInWithEmailAndPassword(auth, email, password);
       // await getUsers(); // Обновление данных пользователя
-      dispatch(showNotification({ message: 'Авторизация успешна!', severity: 'success' }));
+      dispatch(showNotification({ message: 'Авторизація успішна!😀', severity: 'success' }));
     } catch (error: any) {
       dispatch(showNotification({ message: error.message, severity: 'error' }));
       console.error(error);

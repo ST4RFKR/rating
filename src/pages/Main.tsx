@@ -23,6 +23,8 @@ import Modal from '../components/Modal';
 import AddStoreForm from '../components/form/AddStoreForm';
 import { useAppSelector } from '../hook/useAppSelector';
 import { roleSelector } from '../appSlice';
+import { Can } from '@casl/react';
+import { useAbility } from '../components/casl/useAbility';
 
 interface MainProps {
   getUsers: () => void;
@@ -30,8 +32,9 @@ interface MainProps {
 
 const Main: React.FC<MainProps> = ({ getUsers }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const ability = useAbility();
   const [open, setOpen] = React.useState(false);
-  const roleCurrentUser = useAppSelector(roleSelector);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const { data: stores } = useGetStoresQuery();
@@ -40,12 +43,14 @@ const Main: React.FC<MainProps> = ({ getUsers }) => {
     getUsers();
   }, []);
 
+  let sortedStores = stores?.slice().sort((a, b) => b.location.localeCompare(a.location));
+
   return (
     <Box sx={{ p: 3 }}>
       <Paper elevation={3} sx={{ p: 2 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography variant="h6">Магазини</Typography>
-          {roleCurrentUser === 'admin' && (
+          <Can I="create" a="Article" ability={ability}>
             <Tooltip title="Створити новий магазин">
               <Button
                 variant="contained"
@@ -55,10 +60,10 @@ const Main: React.FC<MainProps> = ({ getUsers }) => {
                 Новий магазин
               </Button>
             </Tooltip>
-          )}
+          </Can>
         </Box>
         <Grid container spacing={2}>
-          {stores?.map((el: any) => (
+          {sortedStores?.map((el: any) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={el.id}>
               <Card>
                 <CardContent>
@@ -75,7 +80,7 @@ const Main: React.FC<MainProps> = ({ getUsers }) => {
                     to={`/store/${el.id}`}
                     variant="outlined"
                     color="primary"
-                    startIcon={<StoreIcon />}
+                    startIcon={<StoreIcon sx={{ fill: '#666' }} />}
                     fullWidth>
                     Перейти до магазину
                   </Button>
