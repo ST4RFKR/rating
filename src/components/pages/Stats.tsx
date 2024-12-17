@@ -30,6 +30,7 @@ const Stats = () => {
   const { data: employees } = useGetEmployeesQuery();
   const { data: ratings } = useGetRatingsQuery();
   const { data: stores } = useGetStoresQuery();
+  console.log(stores, ratings, employees);
 
   const dispatch = useAppDispatch();
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -90,7 +91,7 @@ const Stats = () => {
     }
   };
 
-  const title = `Статистика ${
+  const title = `Статистика ${selectedStore !== 'all' ? `по магазину ${selectedStore},` : ''}${
     startDate && endDate
       ? `з ${startDate.toLocaleDateString()} по ${endDate.toLocaleDateString()}`
       : 'за весь період'

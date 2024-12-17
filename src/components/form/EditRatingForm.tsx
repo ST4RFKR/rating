@@ -42,27 +42,27 @@ const EditRatingForm = ({ handleClose, ratingId }: any) => {
       />
       <TextField
         type="time"
-        label="Время"
+        label="Час"
         value={ratingData.time}
         onChange={changeRatingData('time')}
         fullWidth
       />
       <TextField
         type="number"
-        label="Оценка"
+        label="Оцінка"
         InputProps={{ inputProps: { min: 0, max: 2 } }}
         value={ratingData.score}
         onChange={changeRatingData('score')}
         fullWidth
       />
       <TextField
-        label="Комментарий"
+        label="Коментар"
         value={ratingData.comment}
         onChange={changeRatingData('comment')}
         fullWidth
       />
       <TextField
-        label="ССылка на видео"
+        label="Посилання на відео"
         value={ratingData.videoUrl}
         onChange={changeRatingData('videoUrl')}
         fullWidth
@@ -73,25 +73,17 @@ const EditRatingForm = ({ handleClose, ratingId }: any) => {
           variant="contained"
           color="primary"
           onClick={() => {
-            // dispath(
-            //   chengeRating({
-            //     ratingId: ratingId,
-            //     newData: {
-            //       ...ratingData,
-            //     },
-            //   }),
-            // );
             updateRating({ id: ratingId, updatedData: ratingData }).then(() => {
               dispatch(
-                showNotification({ message: 'Дані успішно оновлено!', severity: 'success' }),
+                showNotification({ message: 'Дані успішно оновлено! 😀', severity: 'success' }),
               );
             });
             handleClose();
           }}>
-          Сохранить
+          Зберегти
         </Button>
         <Button variant="outlined" color="secondary" onClick={handleClose}>
-          Отменить
+          Відмінити
         </Button>
       </Box>
     </Box>

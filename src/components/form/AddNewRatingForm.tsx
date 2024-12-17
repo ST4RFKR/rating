@@ -1,126 +1,158 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { TextField, Button, Box, Autocomplete } from '@mui/material';
 import { v1 } from 'uuid';
-import { useAppDispatch } from '../../hook/useAppDispatch';
-
+import { useForm, Controller } from 'react-hook-form';
 import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
-import { useAddRatingMutation } from '../../features/rating/ratingApi';
-import { showNotification } from '../../appSlice';
 import { useUpdateStoreMutation } from '../../features/stores/storesApi';
+import { useAddRatingMutation } from '../../features/rating/ratingApi';
 
 const AddNewRatingForm = ({ store, handleClose }: any) => {
-  const dispatch = useAppDispatch();
-  const [addNewRating] = useAddRatingMutation();
-  const [updateStore] = useUpdateStoreMutation();
   const { data: employees } = useGetEmployeesQuery();
-  const [ratingData, setRatingData] = useState({
-    id: v1(),
-    date: '',
-    time: '',
-    score: 0,
-    comment: '',
-    videoUrl: '',
-    employeeId: '',
-  });
+  const [updateStore] = useUpdateStoreMutation();
+  const [addRating] = useAddRatingMutation();
 
   const currentStoreEmployees = employees?.filter((emp) => emp.currentStoreId === store.id) || [];
-  const currentEmpData = employees?.filter((emp) => emp.id === ratingData.employeeId) || [];
-
   const otherEmployees = employees?.filter((emp) => emp.currentStoreId !== store.id) || [];
 
-  console.log(currentEmpData);
-
-  const changeStoreData = (params: string) => {
-    return (e: any) => {
-      const value = params === 'rating' ? +e.target.value : e.target.value;
-
-      setRatingData({
-        ...ratingData,
-        [params]: value,
-      });
-    };
-  };
-
-  const newRating = async () => {
-    if (!store.employees.includes(ratingData.employeeId)) {
-      const updatedStore = {
-        ...store,
-        employees: [...store.employees, ratingData.employeeId],
-      };
-      updateStore({ id: store.id, updatedData: updatedStore });
-    }
-    // dispatch(createRating({ ...ratingData, store: { id: store.id, name: store.name } }));
-    addNewRating({ ...ratingData, store: { id: store.id, name: store.name } }).then(() => {});
-    dispatch(showNotification({ message: 'Рейтинг успішно створено!', severity: 'success' }));
-    setRatingData({
-      id: v1(),
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    defaultValues: {
       date: '',
       time: '',
       score: 0,
       comment: '',
       videoUrl: '',
-      employeeId: '',
-    });
+      employee: null,
+    },
+  });
 
-    handleClose(false);
-  };
-  const handleEmployeesChange = (e: any, selectedEmployees: any) => {
-    if (selectedEmployees) {
-      setRatingData({
-        ...ratingData,
-        employeeId: selectedEmployees.id,
-      });
-    } else {
-      console.log('No employee selected');
-      setRatingData({
-        ...ratingData,
-        employeeId: '',
-      });
+  const onSubmit = async (data: any) => {
+    const employeeId = data.employee?.id;
+    const newRating = {
+      id: v1(),
+      date: data.date,
+      time: data.time,
+      score: data.score,
+      comment: data.comment,
+      videoUrl: data.videoUrl,
+      employeeId,
+    };
+
+    if (!store.employees.includes(employeeId)) {
+      const updatedStore = {
+        ...store,
+        employees: [...store.employees, employeeId],
+      };
+      await updateStore({ id: updatedStore.id, updatedData: updatedStore });
     }
+
+    await addRating({ ...newRating, store: { id: store.id, name: store.name } });
+    reset();
+    handleClose(false);
   };
 
   return (
-    <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 400 }}>
-      <Autocomplete
-        options={[...currentStoreEmployees, ...otherEmployees]}
-        filterOptions={() => {
-          return [...currentStoreEmployees, ...otherEmployees];
-        }}
-        getOptionLabel={(option) => option.name}
-        onChange={handleEmployeesChange}
-        renderInput={(params) => (
-          <TextField {...params} label="Выберите сотрудникa" placeholder="Выберите сотрудникa" />
+    <Box
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+      sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 400 }}>
+      {/* Поле автокомпліт для вибору співробітника */}
+      <Controller
+        name="employee"
+        control={control}
+        rules={{ required: 'Виберіть співробітника' }}
+        render={({ field }) => (
+          <Autocomplete
+            options={[...currentStoreEmployees, ...otherEmployees]}
+            getOptionLabel={(option) => option.name || ''}
+            onChange={(e, value) => field.onChange(value)}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Виберіть співробітника"
+                placeholder="Введіть ім'я співробітника"
+                error={!!errors.employee}
+                helperText={errors.employee?.message}
+              />
+            )}
+          />
         )}
-        ListboxProps={{
-          style: {
-            maxHeight: 200, // Ограничение высоты выпадающего списка (около 5 элементов)
-            overflow: 'auto',
-          },
-        }}
       />
-      <TextField type="date" value={ratingData.date} onChange={changeStoreData('date')} fullWidth />
-      <TextField type="time" value={ratingData.time} onChange={changeStoreData('time')} fullWidth />
-      <TextField
-        type="number"
-        label="Оценка"
-        InputProps={{ inputProps: { min: 0, max: 2 } }}
-        onInput={(e: any) => {
-          const value = e.target.value;
-          if (value > 2) return (e.target.value = 2);
-          if (value < 0) return (e.target.value = 0);
-        }}
-        value={ratingData.score}
-        onChange={changeStoreData('score')}
-        fullWidth
-      />
-      <TextField label="Коментарий" onChange={changeStoreData('comment')} fullWidth />
-      <TextField label="Ссылка на видео" onChange={changeStoreData('videoUrl')} fullWidth />
 
-      <Button variant="contained" color="primary" onClick={newRating}>
-        {' '}
-        {/* Заглушка для onClick */}
-        Добавить оценку
-      </Button>
+      {/* Поле дати */}
+      <Controller
+        name="date"
+        control={control}
+        rules={{ required: 'Дата є обовзяковою' }}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            type="date"
+            label="Дата"
+            InputLabelProps={{ shrink: true }}
+            error={!!errors.date}
+            helperText={errors.date?.message}
+          />
+        )}
+      />
+
+      {/* Поле часу */}
+      <Controller
+        name="time"
+        control={control}
+        render={({ field }) => (
+          <TextField {...field} type="time" label="Час" InputLabelProps={{ shrink: true }} />
+        )}
+      />
+
+      {/* Поле оцінки */}
+      <Controller
+        name="score"
+        control={control}
+        rules={{
+          required: 'Оцінка є обовзяковою',
+          min: { value: 0, message: 'Оцінка має бути від 0 до 2' },
+          max: { value: 2, message: 'Оцінка має бути від 0 до 2' },
+        }}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            type="number"
+            label="Оцінка (0-2)"
+            InputProps={{ inputProps: { min: 0, max: 2 } }}
+            error={!!errors.score}
+            helperText={errors.score?.message}
+          />
+        )}
+      />
+
+      {/* Поле коментаря */}
+      <Controller
+        name="comment"
+        control={control}
+        render={({ field }) => <TextField {...field} label="Коментар" multiline rows={2} />}
+      />
+
+      {/* Поле відеопосилання */}
+      <Controller
+        name="videoUrl"
+        control={control}
+        render={({ field }) => <TextField {...field} label="Посилання на відео" />}
+      />
+
+      {/* Кнопки */}
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+        <Button variant="outlined" color="secondary" onClick={() => handleClose(false)}>
+          Скасувати
+        </Button>
+        <Button type="submit" variant="contained" color="primary">
+          Додати оцінку
+        </Button>
+      </Box>
     </Box>
   );
 };

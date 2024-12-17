@@ -1,16 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { AppDispatch, RootState } from '../../redux/store';
-import {
-  Typography,
-  Box,
-  Paper,
-  ButtonGroup,
-  Button,
-  Snackbar,
-  Alert,
-  IconButton,
-} from '@mui/material';
+import { Typography, Box, Paper, ButtonGroup, Button, IconButton } from '@mui/material';
 import RatingDetail from '../RatingDetail';
 import Modal from '../Modal';
 import AddNewRatingForm from '../form/AddNewRatingForm';
@@ -24,11 +14,7 @@ import { useAppDispatch } from '../../hook/useAppDispatch';
 import { showNotification } from '../../appSlice';
 import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
 import { Delete as DeleteIcon } from '@mui/icons-material';
-import {
-  useGetSingleStoreQuery,
-  useGetStoresQuery,
-  useUpdateStoreMutation,
-} from '../../features/stores/storesApi';
+import { useGetSingleStoreQuery, useUpdateStoreMutation } from '../../features/stores/storesApi';
 import { useGetRatingsQuery } from '../../features/rating/ratingApi';
 
 const StorePage = ({ getPath }: any) => {
@@ -71,7 +57,7 @@ const StorePage = ({ getPath }: any) => {
   if (!store) {
     return (
       <Typography variant="h6" color="error" align="center">
-        Магазин не найден.
+        Магазин не знайдено... 🥲
       </Typography>
     );
   }
@@ -92,7 +78,7 @@ const StorePage = ({ getPath }: any) => {
       console.log(ratingsLength);
       dispatch(
         showNotification({
-          message: `Дані не видалено: у працівника є оцінки.`,
+          message: `Дані не видалено: у працівника є оцінки. ☺️`,
           severity: 'error',
         }),
       );
@@ -114,9 +100,9 @@ const StorePage = ({ getPath }: any) => {
       </Typography>
 
       <ButtonGroup sx={{ m: '10px' }} variant="outlined">
-        <Button onClick={handleOpen}>Оценить сотрудника</Button>
+        <Button onClick={handleOpen}>Оцінити працівника</Button>
         <Link to={'/main'}>
-          <Button>К выбору магазина</Button>
+          <Button>Назад до вибору магазину</Button>
         </Link>
       </ButtonGroup>
 
@@ -124,7 +110,7 @@ const StorePage = ({ getPath }: any) => {
         storeID={id}
         open={open}
         handleClose={handleClose}
-        decription={'Создать оценку для сотрудника'}>
+        decription={'Створити оцінку працівнику'}>
         <AddNewRatingForm store={store} handleClose={handleClose} />
       </Modal>
 
@@ -138,11 +124,11 @@ const StorePage = ({ getPath }: any) => {
               {isLoadingEmployees && <TitleSkeleton />}
               <Typography
                 sx={{
-                  cursor: 'pointer', // Указывает, что элемент кликабельный
-                  transition: 'color 0.3s, text-decoration 0.3s, transform 0.3s', // Добавляем анимацию увеличения
+                  cursor: 'pointer',
+                  transition: 'color 0.3s, text-decoration 0.3s, transform 0.3s',
                   '&:hover': {
-                    color: 'primary.main', // Меняем цвет текста при наведении
-                    transform: 'scale(1.05)', // Увеличиваем текст на 5%
+                    color: 'primary.main',
+                    transform: 'scale(1.05)',
                   },
                 }}
                 variant="h6">
@@ -187,7 +173,7 @@ const StorePage = ({ getPath }: any) => {
               ))
             ) : (
               <Typography variant="body2" color="textSecondary">
-                Нет оценок
+                Оцінок немає. 😉
               </Typography>
             )}
           </Paper>
