@@ -3,6 +3,7 @@ import { TextField, Button, Box, Grid, LinearProgress } from '@mui/material';
 import { useAppDispatch } from '../../hook/useAppDispatch';
 import { useAddEmployeesMutation } from '../../features/employees/employeesApi';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { showNotification } from '../../appSlice';
 
 type AddEmployeeFormProps = {
   handleClose: (value: boolean) => void;
@@ -33,7 +34,11 @@ const AddEmployeeForm = ({ handleClose }: AddEmployeeFormProps) => {
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
       const modifiedData = { ...data, id: data.id.toLowerCase() };
-      await addNewEmployes(modifiedData).unwrap();
+      await addNewEmployes(modifiedData)
+        .unwrap()
+        .then(() => {
+          dispatch(showNotification({ message: 'Дані успішно створено! 😀', severity: 'success' }));
+        });
       handleClose(false);
     } finally {
     }

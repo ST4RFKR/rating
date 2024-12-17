@@ -1,4 +1,6 @@
+import React from 'react';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+
 export type SortOption =
   | 'date-asc'
   | 'date-desc'
@@ -6,6 +8,7 @@ export type SortOption =
   | 'store-desc'
   | 'time-asc'
   | 'time-desc';
+
 type SortByProps = {
   options: {
     value: SortOption;
@@ -13,18 +16,19 @@ type SortByProps = {
   }[];
   defaultValue: string;
   value: {
-    sort: string;
+    sort: SortOption;
     query: string;
   };
-  onChange: (e: any) => void;
+  onChange: React.Dispatch<React.SetStateAction<{ sort: SortOption; query: string }>>;
 };
-const SortBy = ({ options, defaultValue, value, onChange }: SortByProps) => {
+
+const SortBy: React.FC<SortByProps> = ({ options, defaultValue, value, onChange }) => {
   return (
     <FormControl variant="outlined" sx={{ maxWidth: 150, width: '100%', marginTop: 2 }}>
       <InputLabel>{defaultValue}</InputLabel>
       <Select
         value={value.sort}
-        onChange={(e) => onChange({ ...value, sort: e.target.value })}
+        onChange={(e) => onChange((prev) => ({ ...prev, sort: e.target.value as SortOption }))}
         label={defaultValue}>
         <MenuItem disabled value="">
           {defaultValue}
@@ -38,4 +42,5 @@ const SortBy = ({ options, defaultValue, value, onChange }: SortByProps) => {
     </FormControl>
   );
 };
+
 export default SortBy;

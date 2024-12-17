@@ -7,6 +7,7 @@ export type Notification = {
   open: boolean;
   severity: 'success' | 'error' | 'info' | 'warning';
 };
+export type Role = 'user' | 'admin';
 
 export const appSlice = createSlice({
   name: 'app',
@@ -14,6 +15,7 @@ export const appSlice = createSlice({
     themeMode: 'light' as ThemeMode,
     error: null as string | null,
     status: 'idle' as RequestStatus,
+    role: 'user' as Role,
     isInitialized: true,
     notification: {
       message: '',
@@ -28,6 +30,9 @@ export const appSlice = createSlice({
 
     setAppError: (state, action) => {
       state.error = action.payload.error;
+    },
+    setRole: (state, action) => {
+      state.role = action.payload.role;
     },
     // Обработчик для отображения уведомлений
     showNotification: (
@@ -61,9 +66,16 @@ export const appSlice = createSlice({
   selectors: {
     notificationSelector: (state) => state.notification,
     isInitializedSelector: (state) => state.isInitialized,
+    roleSelector: (state) => state.role,
   },
 });
-export const { notificationSelector, isInitializedSelector } = appSlice.selectors;
-export const { changeTheme, setAppError, showNotification, hideNotification, setIsInitialized } =
-  appSlice.actions;
+export const { notificationSelector, isInitializedSelector, roleSelector } = appSlice.selectors;
+export const {
+  setRole,
+  changeTheme,
+  setAppError,
+  showNotification,
+  hideNotification,
+  setIsInitialized,
+} = appSlice.actions;
 export const appReducer = appSlice.reducer;

@@ -5,12 +5,14 @@ import { useForm, Controller } from 'react-hook-form';
 import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
 import { useUpdateStoreMutation } from '../../features/stores/storesApi';
 import { useAddRatingMutation } from '../../features/rating/ratingApi';
+import { showNotification } from '../../appSlice';
+import { useAppDispatch } from '../../hook/useAppDispatch';
 
 const AddNewRatingForm = ({ store, handleClose }: any) => {
   const { data: employees } = useGetEmployeesQuery();
   const [updateStore] = useUpdateStoreMutation();
   const [addRating] = useAddRatingMutation();
-
+  const dispatch = useAppDispatch();
   const currentStoreEmployees = employees?.filter((emp) => emp.currentStoreId === store.id) || [];
   const otherEmployees = employees?.filter((emp) => emp.currentStoreId !== store.id) || [];
 
@@ -52,6 +54,9 @@ const AddNewRatingForm = ({ store, handleClose }: any) => {
 
     await addRating({ ...newRating, store: { id: store.id, name: store.name } });
     reset();
+
+    dispatch(showNotification({ message: 'Дані успішно створено! 😀', severity: 'success' }));
+
     handleClose(false);
   };
 
@@ -145,7 +150,7 @@ const AddNewRatingForm = ({ store, handleClose }: any) => {
       />
 
       {/* Кнопки */}
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
         <Button variant="outlined" color="secondary" onClick={() => handleClose(false)}>
           Скасувати
         </Button>

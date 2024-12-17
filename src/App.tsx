@@ -27,6 +27,7 @@ import {
   hideNotification,
   isInitializedSelector,
   notificationSelector,
+  setRole,
   ThemeMode,
 } from './appSlice';
 import { getTheme } from './theme';
@@ -46,7 +47,6 @@ function App() {
     dispatch(changeTheme({ themeMode: themeMode === 'light' ? 'dark' : 'light' }));
   };
   const [users, setUsers] = useState<DocumentData[]>([]);
-  const [roleCurrentUser, setRoleCurrentUser] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
   const [path, setPath] = useState<any>('');
 
@@ -60,7 +60,7 @@ function App() {
     const currentUid = getAuth().currentUser?.uid;
     if (currentUid && users.length > 0) {
       const currentUserData = users.find((el) => el.uid === currentUid);
-      setRoleCurrentUser(currentUserData ? currentUserData.role : null);
+      dispatch(setRole({ role: currentUserData ? currentUserData.role : null }));
     }
   }, [users]);
 
@@ -76,7 +76,7 @@ function App() {
       await signOut(auth);
       setUser(null);
       alert('User logged out successfully');
-      setRoleCurrentUser(null);
+      dispatch(setRole({ role: null }));
     } catch (error: any) {
       console.error(error);
       alert(error.message);
@@ -125,10 +125,7 @@ function App() {
             <Header handleLogout={handleLogout} changeModeHandler={changeModeHandler} user={user} />
             <Routes>
               <Route path="/" element={user ? <Navigate to="/main" /> : <AuthPage />} />
-              <Route
-                path="/main"
-                element={<Main roleCurrentUser={roleCurrentUser} getUsers={getUsers} />}
-              />
+              <Route path="/main" element={<Main getUsers={getUsers} />} />
               <Route path="/store/:id" element={<StorePage getPath={getPath} />} />
               <Route path="/employees" element={<EmployeesPage />} />
               <Route path="/employees/:id" element={<EmployeePage />} />

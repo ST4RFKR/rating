@@ -1,55 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { Typography, Box, Paper, ButtonGroup, Button, IconButton } from '@mui/material';
-import RatingDetail from '../RatingDetail';
+import { Typography, Box, ButtonGroup, Button } from '@mui/material';
+import { useGetSingleStoreQuery, useUpdateStoreMutation } from '../../features/stores/storesApi';
+import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
+import { useGetRatingsQuery } from '../../features/rating/ratingApi';
+import { useAppDispatch } from '../../hook/useAppDispatch';
+import { showNotification } from '../../appSlice';
 import Modal from '../Modal';
 import AddNewRatingForm from '../form/AddNewRatingForm';
+import EmployeeRatings from '../tets/EmployeeRatings';
+import { SortOption } from '../UI/select/SortBy';
 
-import RatingDetailSkeleton from '../RatingDetailSkeleton';
-import TitleSkeleton from '../TitleSkeleton';
-import SortBy from '../UI/select/SortBy';
-
-import { useAppDispatch } from '../../hook/useAppDispatch';
-
-import { showNotification } from '../../appSlice';
-import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
-import { Delete as DeleteIcon } from '@mui/icons-material';
-import { useGetSingleStoreQuery, useUpdateStoreMutation } from '../../features/stores/storesApi';
-import { useGetRatingsQuery } from '../../features/rating/ratingApi';
-
-const StorePage = ({ getPath }: any) => {
+const StorePage = ({ getPath }: { getPath: (path: string) => void }) => {
   const { id } = useParams<{ id: string }>();
   const { data: store } = useGetSingleStoreQuery(id);
   const { data: employees, isLoading: isLoadingEmployees } = useGetEmployeesQuery();
   const { data: ratings, isLoading: isLoadingRatings } = useGetRatingsQuery();
   const [updateStore] = useUpdateStoreMutation();
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
-  useEffect(() => {
-    getPath(pathname);
-  }, [pathname]);
-
   const dispatch = useAppDispatch();
 
-  const [filter, setFilter] = useState({
-    sort: '',
+  const [filter, setFilter] = useState<{ sort: SortOption; query: string }>({
+    sort: 'date-desc',
     query: '',
   });
 
-  const filteredEmployees = employees?.filter((el) => store?.employees.includes(el.id));
-  const sortRatings = (ratings: any) => {
-    if (!filter.sort) return ratings;
-
-    return [...ratings].sort((a, b) => {
-      if (filter.sort === 'date-asc') return a.date.localeCompare(b.date);
-      if (filter.sort === 'date-asc') return b.date.localeCompare(a.date);
-      if (filter.sort === 'time-asc') return a.time.localeCompare(b.time);
-      if (filter.sort === 'time-desc') return b.time.localeCompare(a.time);
-
-      return 0;
-    });
-  };
+  useEffect(() => {
+    getPath(pathname);
+  }, [pathname, getPath]);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -61,21 +41,15 @@ const StorePage = ({ getPath }: any) => {
       </Typography>
     );
   }
-  const removeEmployee = (payload: { storeId: string; employeeId: string }) => {
-    const { storeId, employeeId } = payload;
+
+  const filteredEmployees = employees?.filter((el) => store?.employees.includes(el.id));
+
+  const removeEmployee = ({ storeId, employeeId }: { storeId: string; employeeId: string }) => {
     const ratingsLength = ratings?.filter(
       (el) => el.employeeId === employeeId && el.store.id === storeId,
     ).length;
 
-    // Обновляем массив сотрудников, удаляя нужного сотрудника
-    const updatedStore = {
-      ...store,
-      employees: store.employees.filter((employee: any) => employee !== employeeId),
-    };
-
-    // Вызываем санку для обновления
     if (ratingsLength !== 0) {
-      console.log(ratingsLength);
       dispatch(
         showNotification({
           message: `Дані не видалено: у працівника є оцінки. ☺️`,
@@ -84,6 +58,12 @@ const StorePage = ({ getPath }: any) => {
       );
       return;
     }
+
+    const updatedStore = {
+      ...store,
+      employees: store.employees.filter((employee: string) => employee !== employeeId),
+    };
+
     updateStore({ id: storeId, updatedData: updatedStore }).then(() => {
       dispatch(
         showNotification({
@@ -93,17 +73,30 @@ const StorePage = ({ getPath }: any) => {
       );
     });
   };
+
+  const sortRatings = (ratings: any[]) => {
+    if (!filter.sort) return ratings;
+
+    return [...ratings].sort((a, b) => {
+      if (filter.sort === 'date-asc') return a.date.localeCompare(b.date);
+      if (filter.sort === 'date-desc') return b.date.localeCompare(a.date);
+      if (filter.sort === 'time-asc') return a.time.localeCompare(b.time);
+      if (filter.sort === 'time-desc') return b.time.localeCompare(a.time);
+      return 0;
+    });
+  };
+
   return (
     <Box sx={{ padding: 2 }}>
       <Typography variant="h4" component="h2" gutterBottom>
-        Сотрудники магазина {store.name}
+        Співробітники магазину {store.name}
       </Typography>
 
       <ButtonGroup sx={{ m: '10px' }} variant="outlined">
         <Button onClick={handleOpen}>Оцінити працівника</Button>
-        <Link to={'/main'}>
-          <Button>Назад до вибору магазину</Button>
-        </Link>
+        <Button component={Link} to="/main">
+          Назад до вибору магазину
+        </Button>
       </ButtonGroup>
 
       <Modal
@@ -119,64 +112,17 @@ const StorePage = ({ getPath }: any) => {
         const sortedRatings = sortRatings(filteredRating || []);
 
         return (
-          <Paper key={el.id} elevation={3} sx={{ marginBottom: 2, padding: 2 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              {isLoadingEmployees && <TitleSkeleton />}
-              <Typography
-                sx={{
-                  cursor: 'pointer',
-                  transition: 'color 0.3s, text-decoration 0.3s, transform 0.3s',
-                  '&:hover': {
-                    color: 'primary.main',
-                    transform: 'scale(1.05)',
-                  },
-                }}
-                variant="h6">
-                <Link to={`/employees/${el.id}`} style={{ textDecoration: 'none' }}>
-                  {el.name}{' '}
-                </Link>
-
-                <IconButton
-                  onClick={() => {
-                    removeEmployee({ storeId: store.id, employeeId: el.id });
-                  }}>
-                  <DeleteIcon sx={{ opacity: 0.9, fill: 'gray' }} />
-                </IconButton>
-              </Typography>
-
-              <SortBy
-                value={filter}
-                onChange={setFilter}
-                defaultValue="Сортировка"
-                options={[
-                  { value: 'date-asc', name: 'По времени (по возрастанию)' },
-                  { value: 'date-desc', name: 'По времени  (по убыванию)' },
-                  { value: 'time-asc', name: 'По дате (по возрастанию)' },
-                  { value: 'time-desc', name: 'По дате  (по убыванию)' },
-                ]}
-              />
-            </Box>
-            {isLoadingRatings && [...Array(4)].map((_, idx) => <RatingDetailSkeleton key={idx} />)}
-
-            {sortedRatings.length ? (
-              sortedRatings.map((rating: any) => (
-                <RatingDetail
-                  key={rating.id}
-                  date={rating.date}
-                  time={rating.time}
-                  score={rating.score}
-                  store={rating.store}
-                  videoUrl={rating.videoUrl}
-                  comment={rating.comment}
-                  ratingId={rating.id}
-                />
-              ))
-            ) : (
-              <Typography variant="body2" color="textSecondary">
-                Оцінок немає. 😉
-              </Typography>
-            )}
-          </Paper>
+          <EmployeeRatings
+            key={el.id}
+            el={el}
+            store={{ id: store.id }}
+            isLoadingEmployees={isLoadingEmployees}
+            isLoadingRatings={isLoadingRatings}
+            removeEmployee={removeEmployee}
+            filter={filter}
+            setFilter={setFilter}
+            sortedRatings={sortedRatings}
+          />
         );
       })}
     </Box>
