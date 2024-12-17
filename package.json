@@ -2,7 +2,7 @@
   "name": "rating",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://ST4RFKR.github.io/rating",
+  "homepage": ".",
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
