@@ -8,6 +8,8 @@ import { useAppDispatch } from '../hook/useAppDispatch';
 
 import { useDeleteRatingMutation } from '../features/rating/ratingApi';
 import { showNotification } from '../appSlice';
+import { useAbility } from './casl/useAbility';
+import { Can } from '@casl/react';
 
 type RatingDetailProps = {
   date: string;
@@ -35,6 +37,7 @@ const RatingDetail = ({
 
   const dispatch = useAppDispatch();
   const [deleteRating] = useDeleteRatingMutation();
+  const ability = useAbility();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -46,7 +49,6 @@ const RatingDetail = ({
 
       dispatch(showNotification({ message: 'Дані успішно видалено!', severity: 'success' }));
     });
-    // dispatch(deleteRating(ratingId));
   };
 
   return (
@@ -87,12 +89,18 @@ const RatingDetail = ({
       </Grid>
       {/* Кнопки редактирования и удаления в правом верхнем углу */}
       <Box sx={{ position: 'absolute', top: 8, right: 8 }}>
-        <IconButton onClick={handleOpen} sx={{ marginRight: 1 }}>
-          <EditIcon sx={{ opacity: 0.9, fill: 'gray' }} />
-        </IconButton>
-        <IconButton onClick={handleDelete}>
-          <DeleteIcon sx={{ opacity: 0.9, fill: 'gray' }} />
-        </IconButton>
+        <Can I="update" a="Article" ability={ability}>
+          <IconButton onClick={handleOpen} sx={{ marginRight: 1 }}>
+            <EditIcon sx={{ opacity: 0.9, fill: 'gray' }} />
+          </IconButton>
+        </Can>
+
+        {/* Використовуємо CASL для перевірки дозволу на видалення */}
+        <Can I="delete" a="Article" ability={ability}>
+          <IconButton onClick={handleDelete}>
+            <DeleteIcon sx={{ opacity: 0.9, fill: 'gray' }} />
+          </IconButton>
+        </Can>
       </Box>
 
       {/* Модальное окно для редактирования рейтинга */}

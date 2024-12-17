@@ -5,11 +5,15 @@ import App from './App';
 import { store } from './redux/store';
 import { Provider } from 'react-redux';
 import { HashRouter as Router } from 'react-router-dom';
+import { AbilityProvider } from './components/casl/AbilityContext';
+
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <Provider store={store}>
-    <Router>
-      <App />
-    </Router>
+    <AbilityProvider>
+      <Router>
+        <App />
+      </Router>
+    </AbilityProvider>
   </Provider>,
 );

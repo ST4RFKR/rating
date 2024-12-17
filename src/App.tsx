@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { HashRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
 
 import {
@@ -27,6 +27,7 @@ import {
   hideNotification,
   isInitializedSelector,
   notificationSelector,
+  roleSelector,
   setRole,
   ThemeMode,
 } from './appSlice';
@@ -37,6 +38,7 @@ import EmployeesPage from './components/pages/EmployeesPage';
 import Page404 from './components/pages/Page404';
 import styled from './App.module.css';
 import { useAppSelector } from './hook/useAppSelector';
+import { defineAbilityFor } from './components/casl/ability';
 
 function App() {
   const themeMode = useSelector<RootState, ThemeMode>((state) => state.app.themeMode);

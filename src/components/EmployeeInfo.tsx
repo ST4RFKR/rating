@@ -10,22 +10,22 @@ const EmployeInfo = ({ employee }: EmployeInfoPropsType) => {
       <Box>
         <DynamicText title={employee.name} variant="h5" component="h2" gutterBottom />
         <Typography variant="body1" color="textSecondary">
-          Должность: {employee.position}
+          Посада: {employee.position}
         </Typography>
         <Typography variant="body1" color="textSecondary">
-          Средний результат за текущий месяц: {employee.averageScore}
+          Середній результат за поточний місяць: {employee.averageScore}
         </Typography>
         <Typography variant="body1" color="textSecondary">
           Телефон: {employee.phone}
         </Typography>
         <Typography variant="body1" color="textSecondary">
-          Почта: {employee.email}
+          Електронна пошта: {employee.email}
         </Typography>
         <Typography variant="body1" color="textSecondary">
-          Адрес: {employee.address}
+          Адреса: {employee.address}
         </Typography>
         <Typography variant="body1" color="textSecondary">
-          Дата приема на работу: {employee.hireDate}
+          Дата прийому на роботу: {employee.hireDate}
         </Typography>
       </Box>
     </Paper>

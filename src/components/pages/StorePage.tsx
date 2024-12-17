@@ -10,6 +10,8 @@ import Modal from '../Modal';
 import AddNewRatingForm from '../form/AddNewRatingForm';
 import EmployeeRatings from '../tets/EmployeeRatings';
 import { SortOption } from '../UI/select/SortBy';
+import { useAbility } from '../casl/useAbility';
+import { Can } from '@casl/react';
 
 const StorePage = ({ getPath }: { getPath: (path: string) => void }) => {
   const { id } = useParams<{ id: string }>();
@@ -17,6 +19,7 @@ const StorePage = ({ getPath }: { getPath: (path: string) => void }) => {
   const { data: employees, isLoading: isLoadingEmployees } = useGetEmployeesQuery();
   const { data: ratings, isLoading: isLoadingRatings } = useGetRatingsQuery();
   const [updateStore] = useUpdateStoreMutation();
+  const ability = useAbility();
 
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
@@ -92,12 +95,15 @@ const StorePage = ({ getPath }: { getPath: (path: string) => void }) => {
         Співробітники магазину {store.name}
       </Typography>
 
-      <ButtonGroup sx={{ m: '10px' }} variant="outlined">
-        <Button onClick={handleOpen}>Оцінити працівника</Button>
-        <Button component={Link} to="/main">
-          Назад до вибору магазину
+      <Can I="update" a="Article" ability={ability}>
+        <Button variant="outlined" onClick={handleOpen}>
+          Оцінити працівника
         </Button>
-      </ButtonGroup>
+      </Can>
+
+      <Button variant="outlined" sx={{ m: '10px' }} component={Link} to="/main">
+        Назад до вибору магазину
+      </Button>
 
       <Modal
         storeID={id}

@@ -18,6 +18,8 @@ import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
 import { useGetStoresQuery } from '../../features/stores/storesApi';
 import Modal from '../Modal';
 import AddEmployeeForm from '../form/AddEmployeeForm';
+import { useAbility } from '../casl/useAbility';
+import { Can } from '@casl/react';
 
 const EmployeesPage = () => {
   const [open, setOpen] = useState(false);
@@ -30,6 +32,7 @@ const EmployeesPage = () => {
     const store = stores?.find((s) => s.id === storeId);
     return store ? store.name : 'Позаштатний працівник';
   };
+  const ability = useAbility();
 
   // Фільтрація працівників за обраним магазином
   const filteredEmployees =
@@ -60,9 +63,11 @@ const EmployeesPage = () => {
             ))}
           </Select>
         </FormControl>
-        <Button onClick={() => setOpen(true)} variant="contained" color="secondary">
-          Створити нового працівника
-        </Button>
+        <Can I="create" a="Article" ability={ability}>
+          <Button onClick={() => setOpen(true)} variant="contained" color="secondary">
+            Створити нового працівника
+          </Button>
+        </Can>
       </Box>
 
       {/* Модалка для додавання працівника */}

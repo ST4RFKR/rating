@@ -14,6 +14,8 @@ import TitleSkeleton from '../TitleSkeleton';
 import SortBy, { SortOption } from '../UI/select/SortBy';
 import RatingDetailSkeleton from '../RatingDetailSkeleton';
 import RatingDetail from '../RatingDetail';
+import { Can } from '@casl/react';
+import { useAbility } from '../casl/useAbility';
 
 interface EmployeeRatingsProps {
   el: {
@@ -44,6 +46,7 @@ const EmployeeRatings: React.FC<EmployeeRatingsProps> = ({
   setFilter,
   sortedRatings,
 }) => {
+  const ability = useAbility();
   return (
     <Accordion key={el.id} elevation={3} sx={{ marginBottom: 2 }}>
       <AccordionSummary
@@ -76,13 +79,15 @@ const EmployeeRatings: React.FC<EmployeeRatingsProps> = ({
             </Typography>
           )}
           <Box>
-            <IconButton
-              onClick={(event) => {
-                event.stopPropagation();
-                removeEmployee({ storeId: store.id, employeeId: el.id });
-              }}>
-              <DeleteIcon sx={{ opacity: 0.9, fill: 'gray' }} />
-            </IconButton>
+            <Can I="delete" a="Article" ability={ability}>
+              <IconButton
+                onClick={(event) => {
+                  event.stopPropagation();
+                  removeEmployee({ storeId: store.id, employeeId: el.id });
+                }}>
+                <DeleteIcon sx={{ opacity: 0.9, fill: 'gray' }} />
+              </IconButton>
+            </Can>
           </Box>
         </Box>
       </AccordionSummary>
