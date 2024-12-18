@@ -23,7 +23,7 @@ const EmployeePage = () => {
   const employee = employees?.find((el) => el.id === id);
   const employeeRatings = ratings?.filter((rating) => rating.employeeId === id);
 
-  const [filter, setFilter] = useState({ sort: '', query: '', currentMonth: false });
+  const [filter, setFilter] = useState({ sort: '', query: '', currentMonth: true });
   const sortedAndSearchRatings = useRating(
     employeeRatings || [],
     filter.sort,

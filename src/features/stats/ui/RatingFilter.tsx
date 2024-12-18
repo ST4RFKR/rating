@@ -11,7 +11,7 @@ const RatingFilter = ({ filter, setFilter }: any) => {
         Показати оцінки за поточний місяць
         <Checkbox
           onChange={(e) => setFilter({ ...filter, currentMonth: e.target.checked })}
-          value={filter.currentMonth}
+          checked={filter.currentMonth}
         />
       </Typography>
 
