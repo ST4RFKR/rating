@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { AppDispatch } from '../redux/store';
+import { AppDispatch } from '../store/store';
 import {
   Button,
   IconButton,
@@ -18,10 +18,10 @@ import StoreIcon from '@mui/icons-material/Store';
 
 import { useDispatch } from 'react-redux';
 
-import { useGetStoresQuery } from '../features/stores/storesApi';
-import Modal from '../components/Modal';
+import { useGetStoresQuery } from '../features/stores/api/storesApi';
+import Modal from '../components/common/Modal';
 import AddStoreForm from '../components/form/AddStoreForm';
-import { useAppSelector } from '../hook/useAppSelector';
+import { useAppSelector } from '../components/common/hook/useAppSelector';
 import { roleSelector } from '../appSlice';
 import { Can } from '@casl/react';
 import { useAbility } from '../components/casl/useAbility';

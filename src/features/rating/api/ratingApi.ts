@@ -8,9 +8,9 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { fetchFromFirestore } from '../../components/utils/fethFromFireStore';
-import { baseApi } from '../employees/baseApi';
-import { db } from '../../firebase/firebaseConfig';
+import { fetchFromFirestore } from '../../../components/common/utils/fethFromFireStore';
+import { baseApi } from '../../employees/api/baseApi';
+import { db } from '../../../firebase/firebaseConfig';
 
 export const ratingsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

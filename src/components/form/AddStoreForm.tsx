@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { TextField, Button, Box, Autocomplete } from '@mui/material';
-import { useAppDispatch } from '../../hook/useAppDispatch';
+import { useAppDispatch } from '../common/hook/useAppDispatch';
 
-import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
-import { useAddStoreMutation } from '../../features/stores/storesApi';
+import { useGetEmployeesQuery } from '../../features/employees/api/employeesApi';
+import { useAddStoreMutation } from '../../features/stores/api/storesApi';
 
 type AddStoreForm = {
   handleClose: (value: boolean) => void;

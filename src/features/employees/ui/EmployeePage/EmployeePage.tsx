@@ -1,17 +1,17 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { Typography, Box, Button } from '@mui/material';
-import RatingDetail from '../RatingDetail';
+import RatingDetail from './RatingDetail/RatingDetail';
 
-import EmployeInfo from '../EmployeeInfo';
+import EmployeInfo from './EmployeInfo/EmployeeInfo';
 
-import RatingFilter from '../RatingFilter';
-import { useRating } from '../../hook/useRating';
-import RatingDetailSkeleton from '../RatingDetailSkeleton';
-import EmployeInfoSkeleton from '../EmployeInfoSkeleton';
+import RatingFilter from '../../../stats/ui/RatingFilter';
+import { useRating } from '../../../../components/common/hook/useRating';
+import RatingDetailSkeleton from './RatingDetail/RatingDetailSkeleton';
+import EmployeInfoSkeleton from './EmployeInfo/EmployeInfoSkeleton';
 
-import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
-import { useGetRatingsQuery } from '../../features/rating/ratingApi';
+import { useGetEmployeesQuery } from '../../api/employeesApi';
+import { useGetRatingsQuery } from '../../../rating/api/ratingApi';
 import { useState } from 'react';
 
 const EmployeePage = () => {

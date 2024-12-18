@@ -24,22 +24,22 @@ const MobileMenu = ({ handleLogout }: { handleLogout: () => void }) => {
         onClick={toggleDrawer(true)}
         edge="start"
         sx={{
-          display: { xs: 'block', md: 'none' }, // Показывать только на мобильных устройствах
-          padding: '8px', // Равномерный отступ внутри
-          borderRadius: '50%', // Для круглой формы
-          transition: 'background-color 0.3s ease', // Плавный переход цвета
+          display: { xs: 'block', md: 'none' },
+          padding: '8px',
+          borderRadius: '50%',
+          transition: 'background-color 0.3s ease',
           '&:hover': {
-            backgroundColor: 'rgba(255, 255, 255, 0.2)', // Легкий эффект подсветки
+            backgroundColor: 'rgba(255, 255, 255, 0.2)',
           },
           '&:focus': {
-            outline: 'none', // Убираем стандартную обводку фокуса
+            outline: 'none',
           },
         }}>
         <MenuIcon
           sx={{
-            fontSize: '24px', // Размер иконки
+            fontSize: '24px',
             display: 'block',
-            margin: '0 auto', // Центровка внутри кнопки
+            margin: '0 auto',
           }}
         />
       </IconButton>
@@ -52,18 +52,18 @@ const MobileMenu = ({ handleLogout }: { handleLogout: () => void }) => {
               <NavLink
                 to={link.to}
                 style={({ isActive }) => ({
-                  display: 'flex', // Для выравнивания содержимого
+                  display: 'flex',
                   alignItems: 'center',
                   textDecoration: 'none',
                   color: isActive ? '#1976d2' : '#000',
                   fontWeight: isActive ? 'bold' : 'normal',
                   width: '100%',
-                  padding: '12px 16px', // Внутренние отступы
-                  boxSizing: 'border-box', // Учитывает границы в ширине
-                  borderLeft: isActive ? '4px solid #1976d2' : '4px solid transparent', // Обводка слева
-                  transition: 'all 0.3s ease', // Плавный переход
+                  padding: '12px 16px',
+                  boxSizing: 'border-box',
+                  borderLeft: isActive ? '4px solid #1976d2' : '4px solid transparent',
+                  transition: 'all 0.3s ease',
                 })}
-                onClick={toggleDrawer(false)} // Закрыть меню после клика
+                onClick={toggleDrawer(false)}
               >
                 {link.label}
               </NavLink>
@@ -77,7 +77,7 @@ const MobileMenu = ({ handleLogout }: { handleLogout: () => void }) => {
                 toggleDrawer(false)();
               }}
               style={{
-                display: 'flex', // Для выравнивания содержимого
+                display: 'flex',
                 alignItems: 'center',
                 textDecoration: 'none',
                 color: 'red',
@@ -88,8 +88,8 @@ const MobileMenu = ({ handleLogout }: { handleLogout: () => void }) => {
                 border: 'none',
                 background: 'none',
                 cursor: 'pointer',
-                boxSizing: 'border-box', // Учитывает ширину границы
-                transition: 'background-color 0.3s ease', // Плавный переход
+                boxSizing: 'border-box',
+                transition: 'background-color 0.3s ease',
               }}
               onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#ffe5e5')}
               onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>

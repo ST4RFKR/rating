@@ -11,11 +11,11 @@ import {
 import { Link } from 'react-router-dom';
 import { Delete as DeleteIcon, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import TitleSkeleton from '../TitleSkeleton';
-import SortBy, { SortOption } from '../UI/select/SortBy';
-import RatingDetailSkeleton from '../RatingDetailSkeleton';
-import RatingDetail from '../RatingDetail';
+import SortBy, { SortOption } from '../../../../../components/common/ui/select/SortBy';
+import RatingDetailSkeleton from '../RatingDetail/RatingDetailSkeleton';
+import RatingDetail from '../RatingDetail/RatingDetail';
 import { Can } from '@casl/react';
-import { useAbility } from '../casl/useAbility';
+import { useAbility } from '../../../../../components/casl/useAbility';
 
 interface EmployeeRatingsProps {
   el: {

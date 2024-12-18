@@ -11,17 +11,17 @@ import {
   ThemeProvider,
 } from '@mui/material';
 import Main from './pages/Main';
-import StorePage from './components/pages/StorePage';
-import EmployeePage from './components/pages/EmployeePage';
+import StorePage from './features/stores/ui/StorePage';
+import EmployeePage from './features/employees/ui/EmployeePage/EmployeePage';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth, db } from './firebase/firebaseConfig';
 
 import { collection, DocumentData, getDocs } from 'firebase/firestore';
-import AuthPage from './components/pages/auth/AuthPage';
-import Stats from './components/pages/Stats';
-import { Header } from './components/Header';
+import AuthPage from './pages/auth/AuthPage';
+import Stats from './features/stats/ui/Stats';
+import { Header } from './features/header/ui/Header';
 import { useSelector } from 'react-redux';
-import { RootState } from './redux/store';
+import { RootState } from './store/store';
 import {
   changeTheme,
   hideNotification,
@@ -32,12 +32,12 @@ import {
   ThemeMode,
 } from './appSlice';
 import { getTheme } from './theme';
-import { useAppDispatch } from './hook/useAppDispatch';
+import { useAppDispatch } from './components/common/hook/useAppDispatch';
 
-import EmployeesPage from './components/pages/EmployeesPage';
-import Page404 from './components/pages/Page404';
+import EmployeesPage from './features/employees/ui/EmployeesPage';
+import Page404 from './pages/Page404';
 import styled from './App.module.css';
-import { useAppSelector } from './hook/useAppSelector';
+import { useAppSelector } from './components/common/hook/useAppSelector';
 import { defineAbilityFor } from './components/casl/ability';
 
 function App() {

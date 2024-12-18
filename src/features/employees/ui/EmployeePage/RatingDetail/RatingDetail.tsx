@@ -2,13 +2,13 @@ import React from 'react';
 import { Box, Grid, Typography, Divider, IconButton, ListItem } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 
-import Modal from './Modal';
-import EditRatingForm from './form/EditRatingForm';
-import { useAppDispatch } from '../hook/useAppDispatch';
+import Modal from '../../../../../components/common/Modal';
+import EditRatingForm from '../../../../../components/form/EditRatingForm';
+import { useAppDispatch } from '../../../../../components/common/hook/useAppDispatch';
 
-import { useDeleteRatingMutation } from '../features/rating/ratingApi';
-import { showNotification } from '../appSlice';
-import { useAbility } from './casl/useAbility';
+import { useDeleteRatingMutation } from '../../../../rating/api/ratingApi';
+import { showNotification } from '../../../../../appSlice';
+import { useAbility } from '../../../../../components/casl/useAbility';
 import { Can } from '@casl/react';
 
 type RatingDetailProps = {

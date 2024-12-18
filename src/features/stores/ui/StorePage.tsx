@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { Typography, Box, ButtonGroup, Button } from '@mui/material';
-import { useGetSingleStoreQuery, useUpdateStoreMutation } from '../../features/stores/storesApi';
-import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
-import { useGetRatingsQuery } from '../../features/rating/ratingApi';
-import { useAppDispatch } from '../../hook/useAppDispatch';
-import { showNotification } from '../../appSlice';
-import Modal from '../Modal';
-import AddNewRatingForm from '../form/AddNewRatingForm';
-import EmployeeRatings from '../tets/EmployeeRatings';
-import { SortOption } from '../UI/select/SortBy';
-import { useAbility } from '../casl/useAbility';
+import { useGetSingleStoreQuery, useUpdateStoreMutation } from '../api/storesApi';
+import { useGetEmployeesQuery } from '../../employees/api/employeesApi';
+import { useGetRatingsQuery } from '../../rating/api/ratingApi';
+import { useAppDispatch } from '../../../components/common/hook/useAppDispatch';
+import { showNotification } from '../../../appSlice';
+import Modal from '../../../components/common/Modal';
+import AddNewRatingForm from '../../../components/form/AddNewRatingForm';
+import EmployeeRatings from '../../employees/ui/EmployeePage/EmployeeRatings/EmployeeRatings';
+import { SortOption } from '../../../components/common/ui/select/SortBy';
+import { useAbility } from '../../../components/casl/useAbility';
 import { Can } from '@casl/react';
 
 const StorePage = ({ getPath }: { getPath: (path: string) => void }) => {

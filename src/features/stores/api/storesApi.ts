@@ -1,7 +1,7 @@
 import { collection, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import { baseApi } from '../employees/baseApi';
-import { db } from '../../firebase/firebaseConfig';
-import { fetchFromFirestore } from '../../components/utils/fethFromFireStore';
+import { baseApi } from '../../employees/api/baseApi';
+import { db } from '../../../firebase/firebaseConfig';
+import { fetchFromFirestore } from '../../../components/common/utils/fethFromFireStore';
 
 export const storesApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({

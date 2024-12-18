@@ -1,7 +1,7 @@
 // services/baseApi.js
 import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getFirestore } from 'firebase/firestore';
-import { db } from '../../firebase/firebaseConfig';
+import { db } from '../../../firebase/firebaseConfig';
 
 // Общий API для всех Firebase-запросов
 export const baseApi = createApi({

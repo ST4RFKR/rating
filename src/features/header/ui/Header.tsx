@@ -4,9 +4,9 @@ import Switch from '@mui/material/Switch';
 import Toolbar from '@mui/material/Toolbar';
 import React from 'react';
 import { Box, LinearProgress, Typography } from '@mui/material';
-import { useAppSelector } from '../hook/useAppSelector';
-import NavButtons from './NavButtons';
-import MobileMenu from './MobileMenu';
+import { useAppSelector } from '../../../components/common/hook/useAppSelector';
+import NavButtons from './navButtons/NavButtons';
+import MobileMenu from './MobileMenu/MobileMenu';
 
 export const Header = ({ handleLogout, changeModeHandler, user }: any) => {
   const appStatus = useAppSelector((state) => state.app.status);

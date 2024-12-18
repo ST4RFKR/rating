@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../../firebase/firebaseConfig';
+import { auth } from '../../firebase/firebaseConfig';
 import { Button, TextField, Box, Typography } from '@mui/material';
-import { useAppDispatch } from '../../../hook/useAppDispatch';
-import { setIsInitialized, showNotification } from '../../../appSlice';
+import { useAppDispatch } from '../../components/common/hook/useAppDispatch';
+import { setIsInitialized, showNotification } from '../../appSlice';
 
 const Login = () => {
   const [email, setEmail] = useState('');

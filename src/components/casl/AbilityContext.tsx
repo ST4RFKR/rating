@@ -4,7 +4,7 @@ import { Ability } from '@casl/ability';
 
 import { defineAbilityFor } from './ability';
 import { roleSelector } from '../../appSlice';
-import { useAppSelector } from '../../hook/useAppSelector';
+import { useAppSelector } from '../common/hook/useAppSelector';
 
 const AbilityContext = createContext<Ability | null>(null);
 

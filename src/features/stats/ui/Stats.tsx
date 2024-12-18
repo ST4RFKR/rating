@@ -19,13 +19,13 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import html2canvas from 'html2canvas';
-import { useAppDispatch } from '../../hook/useAppDispatch';
+import { useAppDispatch } from '../../../components/common/hook/useAppDispatch';
 
-import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
-import { useGetRatingsByDateQuery, useGetRatingsQuery } from '../../features/rating/ratingApi';
-import DateRangePicker from '../DateRangePicker';
+import { useGetEmployeesQuery } from '../../employees/api/employeesApi';
+import { useGetRatingsByDateQuery, useGetRatingsQuery } from '../../rating/api/ratingApi';
+import DateRangePicker from './DateRangePicker';
 import { startOfDay, endOfDay, parseISO, isWithinInterval } from 'date-fns';
-import { useGetStoresQuery } from '../../features/stores/storesApi';
+import { useGetStoresQuery } from '../../stores/api/storesApi';
 
 const Stats = () => {
   const { data: employees } = useGetEmployeesQuery();

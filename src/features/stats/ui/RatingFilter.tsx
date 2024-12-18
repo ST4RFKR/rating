@@ -1,6 +1,6 @@
 import React from 'react';
-import SearchInput from './UI/input/SearchInput';
-import SortBy from './UI/select/SortBy';
+import SearchInput from '../../../components/common/ui/input/SearchInput';
+import SortBy from '../../../components/common/ui/select/SortBy';
 import Checkbox from '@mui/material/Checkbox';
 import { Typography } from '@mui/material';
 

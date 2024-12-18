@@ -14,13 +14,13 @@ import {
   MenuItem,
   Select,
 } from '@mui/material';
-import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
-import { useGetStoresQuery } from '../../features/stores/storesApi';
-import Modal from '../Modal';
-import AddEmployeeForm from '../form/AddEmployeeForm';
-import { useAbility } from '../casl/useAbility';
+import { useGetEmployeesQuery } from '../api/employeesApi';
+import { useGetStoresQuery } from '../../stores/api/storesApi';
+import Modal from '../../../components/common/Modal';
+import AddEmployeeForm from '../../../components/form/AddEmployeeForm';
+import { useAbility } from '../../../components/casl/useAbility';
 import { Can } from '@casl/react';
-import SearchInput from '../UI/input/SearchInput';
+import SearchInput from '../../../components/common/ui/input/SearchInput';
 
 const EmployeesPage = () => {
   const [open, setOpen] = useState(false);

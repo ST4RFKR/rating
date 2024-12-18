@@ -1,6 +1,6 @@
 // services/todoApi.js
-import { fetchFromFirestore } from '../../components/utils/fethFromFireStore';
-import { db } from '../../firebase/firebaseConfig';
+import { fetchFromFirestore } from '../../../components/common/utils/fethFromFireStore';
+import { db } from '../../../firebase/firebaseConfig';
 import { baseApi, firestoreDb } from './baseApi';
 import { updateDoc, deleteDoc, doc, setDoc } from 'firebase/firestore';
 

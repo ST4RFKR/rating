@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
-import { AppDispatch } from '../../redux/store';
+import { AppDispatch } from '../../store/store';
 import { useDispatch } from 'react-redux';
 
-import { useGetRatingsQuery, useUpdateRatingMutation } from '../../features/rating/ratingApi';
+import { useGetRatingsQuery, useUpdateRatingMutation } from '../../features/rating/api/ratingApi';
 import { showNotification } from '../../appSlice';
 
 const EditRatingForm = ({ handleClose, ratingId }: any) => {

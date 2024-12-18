@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Grid, LinearProgress } from '@mui/material';
-import { useAppDispatch } from '../../hook/useAppDispatch';
-import { useAddEmployeesMutation } from '../../features/employees/employeesApi';
+import { useAppDispatch } from '../common/hook/useAppDispatch';
+import { useAddEmployeesMutation } from '../../features/employees/api/employeesApi';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { showNotification } from '../../appSlice';
 

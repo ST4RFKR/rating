@@ -2,11 +2,11 @@ import React from 'react';
 import { TextField, Button, Box, Autocomplete } from '@mui/material';
 import { v1 } from 'uuid';
 import { useForm, Controller } from 'react-hook-form';
-import { useGetEmployeesQuery } from '../../features/employees/employeesApi';
-import { useUpdateStoreMutation } from '../../features/stores/storesApi';
-import { useAddRatingMutation } from '../../features/rating/ratingApi';
+import { useGetEmployeesQuery } from '../../features/employees/api/employeesApi';
+import { useUpdateStoreMutation } from '../../features/stores/api/storesApi';
+import { useAddRatingMutation } from '../../features/rating/api/ratingApi';
 import { showNotification } from '../../appSlice';
-import { useAppDispatch } from '../../hook/useAppDispatch';
+import { useAppDispatch } from '../common/hook/useAppDispatch';
 
 const AddNewRatingForm = ({ store, handleClose }: any) => {
   const { data: employees } = useGetEmployeesQuery();
