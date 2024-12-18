@@ -20,10 +20,12 @@ import Modal from '../Modal';
 import AddEmployeeForm from '../form/AddEmployeeForm';
 import { useAbility } from '../casl/useAbility';
 import { Can } from '@casl/react';
+import SearchInput from '../UI/input/SearchInput';
 
 const EmployeesPage = () => {
   const [open, setOpen] = useState(false);
-  const [selectedStore, setSelectedStore] = useState('all'); // Стан для фільтрації магазину
+  const [selectedStore, setSelectedStore] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const { data: stores } = useGetStoresQuery();
   const { data: employees } = useGetEmployeesQuery();
@@ -32,13 +34,13 @@ const EmployeesPage = () => {
     const store = stores?.find((s) => s.id === storeId);
     return store ? store.name : 'Позаштатний працівник';
   };
+
   const ability = useAbility();
 
-  // Фільтрація працівників за обраним магазином
-  const filteredEmployees =
-    selectedStore === 'all'
-      ? employees
-      : employees?.filter((emp) => emp.currentStoreId === selectedStore);
+  // Фільтрація працівників за магазином і пошуковим запитом
+  const filteredEmployees = employees
+    ?.filter((emp) => selectedStore === 'all' || emp.currentStoreId === selectedStore)
+    .filter((emp) => emp.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
     <Box>
@@ -70,6 +72,15 @@ const EmployeesPage = () => {
         </Can>
       </Box>
 
+      {/* Пошук */}
+      <Box sx={{ mb: 2 }}>
+        <SearchInput
+          value={{ query: searchQuery, sort: '' }}
+          onChange={({ query }) => setSearchQuery(query)}
+          placeholder="Введіть ім'я працівника..."
+        />
+      </Box>
+
       {/* Модалка для додавання працівника */}
       <Modal
         open={open}
@@ -81,7 +92,7 @@ const EmployeesPage = () => {
       {/* Відображення списку працівників */}
       {filteredEmployees?.length === 0 ? (
         <Typography variant="h6" color="text.secondary">
-          Сотрудники не найдены.
+          Сотрудники не знайдені.
         </Typography>
       ) : (
         <List>
