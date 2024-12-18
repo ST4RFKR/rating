@@ -16,6 +16,7 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
+  SelectChangeEvent,
 } from '@mui/material';
 import html2canvas from 'html2canvas';
 import { useAppDispatch } from '../../hook/useAppDispatch';
@@ -41,18 +42,58 @@ const Stats = () => {
     endDate: endDate ? endDate.toISOString().slice(0, 10) : null,
   });
 
-  useEffect(() => {
-    if (localStorage.getItem('filterEfficiency')) {
-      setFilterEfficiency(localStorage.getItem('filterEfficiency') === 'true');
-    }
-    const today = new Date();
-    const endDate = today;
-    const startDate = new Date(today);
-    startDate.setDate(today.getDate() - 7);
+  // useEffect(() => {
+  //   if (localStorage.getItem('filterEfficiency')) {
+  //     setFilterEfficiency(localStorage.getItem('filterEfficiency') === 'true');
+  //   }
+  //   const today = new Date();
+  //   const endDate = today;
+  //   const startDate = new Date(today);
+  //   startDate.setDate(today.getDate() - 7);
 
-    setStartDate(startDate);
-    setEndDate(endDate);
+  //   setStartDate(startDate);
+  //   setEndDate(endDate);
+  // }, []);
+
+  useEffect(() => {
+    // Завантаження початкових значень із localStorage
+    const storedFilterEfficiency = localStorage.getItem('filterEfficiency');
+    const storedSelectedStore = localStorage.getItem('selectedStore');
+    const storedStartDate = localStorage.getItem('startDate');
+    const storedEndDate = localStorage.getItem('endDate');
+
+    // Ініціалізація стану значеннями з localStorage, якщо вони є
+    setFilterEfficiency(storedFilterEfficiency === 'true');
+    setSelectedStore(storedSelectedStore || 'all');
+
+    if (storedStartDate) {
+      setStartDate(new Date(storedStartDate));
+    } else {
+      const today = new Date();
+      const defaultStartDate = new Date(today);
+      defaultStartDate.setDate(today.getDate() - 7);
+      setStartDate(defaultStartDate);
+    }
+
+    if (storedEndDate) {
+      setEndDate(new Date(storedEndDate));
+    } else {
+      setEndDate(new Date());
+    }
   }, []);
+
+  const handleStoreChange = (event: SelectChangeEvent) => {
+    const value = event.target.value;
+    setSelectedStore(value);
+    localStorage.setItem('selectedStore', value);
+  };
+
+  const handleDateChange = (start: Date | null, end: Date | null) => {
+    setStartDate(start);
+    setEndDate(end);
+    if (start) localStorage.setItem('startDate', start.toISOString());
+    if (end) localStorage.setItem('endDate', end.toISOString());
+  };
 
   const tableRef = useRef<HTMLDivElement>(null);
 
@@ -115,8 +156,8 @@ const Stats = () => {
         <DateRangePicker
           startDate={startDate}
           endDate={endDate}
-          onStartDateChange={setStartDate}
-          onEndDateChange={setEndDate}
+          onStartDateChange={(date) => handleDateChange(date, endDate)}
+          onEndDateChange={(date) => handleDateChange(startDate, date)}
         />
       </Box>
 
@@ -126,7 +167,7 @@ const Stats = () => {
           <Select
             labelId="store-select-label"
             value={selectedStore}
-            onChange={(e) => setSelectedStore(e.target.value)}
+            onChange={handleStoreChange}
             label="Магазин">
             <MenuItem value="all">Всі магазини</MenuItem>
             {stores?.map((store) => (
