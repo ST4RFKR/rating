@@ -23,6 +23,10 @@ export const getTheme = (themeMode: ThemeMode) => {
       },
       h4: {
         color: isDark ? '#FFFFFF' : '#000000',
+        fontSize: '2.5rem',
+        '@media (max-width:600px)': {
+          fontSize: '1.28rem',
+        },
       },
       h5: {
         color: isDark ? '#FFFFFF' : '#000000',

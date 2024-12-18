@@ -142,7 +142,7 @@ const Stats = () => {
     }
   };
 
-  const title = `Статистика ${selectedStore !== 'all' ? `по магазину ${selectedStore},` : ''}${
+  const title = `${selectedStore !== 'all' ? ` ${selectedStore},` : ''}${
     startDate && endDate
       ? `з ${startDate.toLocaleDateString()} по ${endDate.toLocaleDateString()}`
       : 'за весь період'
@@ -150,7 +150,19 @@ const Stats = () => {
 
   return (
     <Box sx={{ p: 2 }}>
-      <Typography variant="h4">{title}</Typography>
+      <Typography
+        variant="h4"
+        sx={{
+          fontSize: {
+            xs: '1.5rem',
+            sm: '2rem',
+            md: '2.5rem',
+          },
+          textAlign: 'center',
+          marginBottom: '1rem',
+        }}>
+        {title}
+      </Typography>
 
       <Box sx={{ mb: 2, marginTop: '10px' }}>
         <DateRangePicker
@@ -162,13 +174,29 @@ const Stats = () => {
       </Box>
 
       <Box sx={{ mb: 2, display: 'flex', flexDirection: 'column' }}>
-        <FormControl sx={{ minWidth: 200 }}>
+        <FormControl
+          sx={{
+            minWidth: {
+              xs: 120,
+              sm: 200,
+            },
+            width: {
+              xs: '100%',
+              sm: 'auto',
+            },
+          }}>
           <InputLabel id="store-select-label">Магазин</InputLabel>
           <Select
             labelId="store-select-label"
             value={selectedStore}
             onChange={handleStoreChange}
-            label="Магазин">
+            label="Магазин"
+            sx={{
+              fontSize: {
+                xs: '0.75rem',
+                sm: '1rem',
+              },
+            }}>
             <MenuItem value="all">Всі магазини</MenuItem>
             {stores?.map((store) => (
               <MenuItem key={store.id} value={store.id}>
@@ -177,6 +205,7 @@ const Stats = () => {
             ))}
           </Select>
         </FormControl>
+
         <FormControlLabel
           control={
             <Checkbox
@@ -192,10 +221,17 @@ const Stats = () => {
         />
         <Box>
           <Button
-            sx={{ mb: '10px', maxWidth: '200px' }}
             variant="contained"
-            color="secondary"
-            onClick={makeScreenshot}>
+            sx={{
+              width: {
+                xs: '100%',
+                sm: 'auto',
+              },
+              fontSize: {
+                xs: '0.8rem',
+                sm: '1rem',
+              },
+            }}>
             Зробити скріншот
           </Button>
         </Box>
