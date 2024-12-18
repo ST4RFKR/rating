@@ -62,18 +62,18 @@ const RatingDetail = ({
         </Grid>
         <Grid item xs={12} sm={6}>
           <Typography variant="body2" color="textSecondary">
-            Время: {time}
+            Час: {time}
           </Typography>
         </Grid>
         <Grid item xs={12} sm={4}>
-          <Typography>Оценка: {score}</Typography>
+          <Typography>Оцінка: {score}</Typography>
         </Grid>
         <Grid item xs={12} sm={4}>
           <Typography>Магазин: {store.name}</Typography>
         </Grid>
         <Grid item xs={12} sm={4}>
           <Typography>
-            Видео:{' '}
+            Відео:{' '}
             <a href={videoUrl} target="_blank" rel="noopener noreferrer">
               {videoUrl}
             </a>
@@ -82,7 +82,7 @@ const RatingDetail = ({
         {comment && (
           <Grid item xs={12}>
             <Typography variant="body2" color="textSecondary">
-              Комментарий: {comment}
+              Коментар: {comment}
             </Typography>
           </Grid>
         )}

@@ -8,23 +8,23 @@ const RatingFilter = ({ filter, setFilter }: any) => {
   return (
     <>
       <Typography variant="h6" component="h2" align="center">
-        Отобразить только за текущий месяц
+        Показати оцінки за поточний місяць
         <Checkbox
           onChange={(e) => setFilter({ ...filter, currentMonth: e.target.checked })}
           value={filter.currentMonth}
         />
       </Typography>
 
-      <SearchInput value={filter} onChange={setFilter} placeholder="Введите название магазина..." />
+      <SearchInput value={filter} onChange={setFilter} placeholder="Введіть назву магазину..." />
       <SortBy
         value={filter.sort}
         onChange={setFilter}
-        defaultValue="Сортировка"
+        defaultValue="Сортування"
         options={[
-          { value: 'store-asc', name: 'По магазинам (по возрастанию)' },
-          { value: 'store-desc', name: 'По магазинам (по убыванию)' },
-          { value: 'date-asc', name: 'По дате (по возрастанию)' },
-          { value: 'date-desc', name: 'По дате  (по убыванию)' },
+          { value: 'store-asc', name: 'За магазинами (за зростанням)' },
+          { value: 'store-desc', name: 'За магазинами (за спаданням)' },
+          { value: 'date-asc', name: 'За датою (за зростанням)' },
+          { value: 'date-desc', name: 'За датою (за спаданням)' },
         ]}
       />
     </>
