@@ -137,7 +137,9 @@ const Stats = () => {
       const dataUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.href = dataUrl;
-      link.download = `Employee_Stats_${String(Date.now()).slice(9) || 'Unknown'}.png`;
+      link.download = `${selectedStore}_${startDate?.toISOString().slice(0, 10) || 'Unknown'}__${
+        endDate?.toISOString().slice(0, 10) || 'Unknown'
+      }.png`;
       link.click();
     }
   };
@@ -217,11 +219,12 @@ const Stats = () => {
               color="primary"
             />
           }
-          label="Сортировать по эффективности"
+          label="Сортувати по ефективності"
         />
         <Box>
           <Button
             variant="contained"
+            onClick={makeScreenshot}
             sx={{
               width: {
                 xs: '100%',
