@@ -63,7 +63,8 @@ const Stats = () => {
     const storedEndDate = localStorage.getItem('endDate');
 
     // Ініціалізація стану значеннями з localStorage, якщо вони є
-    setFilterEfficiency(storedFilterEfficiency === 'true');
+
+    setFilterEfficiency(storedFilterEfficiency !== null ? storedFilterEfficiency === 'true' : true);
     setSelectedStore(storedSelectedStore || 'all');
 
     if (storedStartDate) {
@@ -126,6 +127,7 @@ const Stats = () => {
       efficiency,
     };
   });
+  employeeStats = employeeStats?.filter((stat) => stat.totalShifts > 0);
 
   if (filterEfficiency) {
     employeeStats = employeeStats?.sort((a, b) => b.efficiency - a.efficiency);
